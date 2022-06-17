@@ -7,10 +7,10 @@ import (
 )
 
 type EventController struct {
-	service *event.Service
+	service *coordinate.Service
 }
 
-func NewEventController(s *event.Service) *EventController {
+func NewEventController(s *coordinate.Service) *EventController {
 	return &EventController{
 		service: s,
 	}
@@ -18,7 +18,7 @@ func NewEventController(s *event.Service) *EventController {
 
 func (c *EventController) FindAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		events, err := (*c.service).FindAll()
+		coordinates, err := (*c.service).FindAll()
 		if err != nil {
 			fmt.Printf("EventController.FindeAll(): %s", err)
 			if err != nil {
@@ -27,7 +27,7 @@ func (c *EventController) FindAll() http.HandlerFunc {
 			return
 		}
 
-		err = success(w, events)
+		err = success(w, coordinates)
 		if err != nil {
 			fmt.Printf("EventController.FindAll: %s", err)
 		}

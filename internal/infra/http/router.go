@@ -36,7 +36,7 @@ func Router(eventController *controllers.EventController) http.Handler  {
 }
 
 func AddEventRoutes(router *chi.Router, eventController *controllers.EventController) {
-	(*router).Route("/events", func(apiRouter chi.Router) {
+	(*router).Route("/coordinates", func(apiRouter chi.Router) {
 		apiRouter.Get(
 			"/",
 			eventController.FindAll(),

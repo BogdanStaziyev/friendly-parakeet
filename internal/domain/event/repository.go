@@ -1,40 +1,39 @@
-package event
+package coordinate
 
 import (
-
 	"github.com/upper/db/v4/adapter/postgresql"
 	"log"
 )
 
 var settings = postgresql.ConnectionURL{
 	Database: `postgres`,
-	Host: `localhost:54322`,
-	User: `postgres`,
+	Host:     `localhost:54322`,
+	User:     `postgres`,
 	Password: `password`,
 }
 
 type Repository interface {
-	FindAll() ([]Event, error)
+	FindAll() ([]Coordinate, error)
 }
 
-const EventsCount int64= 10
+const CoordinatesCount int64 = 10
 
 type repository struct {
 	//Some internal data
 }
 
-func NewRepository() Repository{
+func NewRepository() Repository {
 	return &repository{}
 }
 
-func (r *repository) FindAll()([]Event, error)  {
-	events := make([]Event, EventsCount)
+func (r *repository) FindAll() ([]Coordinate, error) {
+	coordinates := make([]Coordinate, CoordinatesCount)
 	db, err := postgresql.Open(settings)
-	if err != nil{
+	if err != nil {
 		log.Fatal("Open: ", err)
 	}
 	defer db.Close()
-	res := db.Collection("Event")
-	err = res.Find().All(&events)
-	return events, nil
+	res := db.Collection("Coordinate")
+	err = res.Find().All(&coordinates)
+	return coordinates, nil
 }

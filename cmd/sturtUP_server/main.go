@@ -38,15 +38,15 @@ func main() {
 	}()
 
 	//Event
-	eventRepository := event.NewRepository()
-	eventService := event.NewService(&eventRepository)
-	eventController := controllers.NewEventController(&eventService)
+	coordinateRepository := coordinate.NewRepository()
+	coordinateService := coordinate.NewService(&coordinateRepository)
+	coordinateController := controllers.NewEventController(&coordinateService)
 
 	//HTTP Server
 	err := http.Server(
 		ctx,
 		http.Router(
-			eventController,
+			coordinateController,
 		),
 	)
 
