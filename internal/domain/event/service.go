@@ -1,7 +1,7 @@
-package event
+package coordinate
 
 type Service interface {
-	FindAll() ([]Event, error)
+	FindAll() ([]Coordinate, error)
 }
 
 type service struct {
@@ -14,6 +14,6 @@ func NewService(r *Repository) Service {
 	}
 }
 
-func (s *service) FindAll() ([]Event, error) {
+func (s *service) FindAll() ([]Coordinate, error) {
 	return (*s.repo).FindAll()
 }
