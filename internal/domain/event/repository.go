@@ -16,8 +16,6 @@ type Repository interface {
 	FindAll() ([]Coordinate, error)
 }
 
-const CoordinatesCount int64 = 10
-
 type repository struct {
 	//Some internal data
 }
@@ -27,7 +25,7 @@ func NewRepository() Repository {
 }
 
 func (r *repository) FindAll() ([]Coordinate, error) {
-	coordinates := make([]Coordinate, CoordinatesCount)
+	coordinates := make([]Coordinate, 1)
 	db, err := postgresql.Open(settings)
 	if err != nil {
 		log.Fatal("Open: ", err)
