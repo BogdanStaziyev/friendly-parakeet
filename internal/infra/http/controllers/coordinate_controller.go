@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"startUp/internal/domain/event"
+	"startUp/internal/domain/coordinates"
 )
 
 type EventController struct {

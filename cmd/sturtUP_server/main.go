@@ -8,7 +8,7 @@ import (
 	"runtime/debug"
 	"syscall"
 
-	"startUp/internal/domain/event"
+	"startUp/internal/domain/coordinates"
 	"startUp/internal/infra/http"
 	"startUp/internal/infra/http/controllers"
 )
@@ -50,7 +50,7 @@ func main() {
 		),
 	)
 
-	if err != nil{
+	if err != nil {
 		fmt.Printf("http server error: %s", err)
 		exitCode = 2
 		return
