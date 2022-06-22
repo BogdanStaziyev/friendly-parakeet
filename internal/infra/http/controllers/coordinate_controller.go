@@ -11,14 +11,14 @@ import (
 )
 
 type EventController struct {
-	service 		*coordinate.Service
-	validator 		*validators.CoordinateValidator,
+	service   *coordinate.Service
+	validator *validators.CoordinateValidator
 }
 
 func NewEventController(s *coordinate.Service) *EventController {
 	return &EventController{
-		service: 			s,
-		validator: 			validators.NewCoordinateValidator(),
+		service:   s,
+		validator: validators.NewCoordinateValidator(),
 	}
 }
 
