@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func Router(eventController *controllers.EventController) http.Handler  {
+func Router(eventController *controllers.EventController) http.Handler {
 	router := chi.NewRouter()
 
 	//Health
@@ -19,12 +19,12 @@ func Router(eventController *controllers.EventController) http.Handler  {
 			healthRouter.Handle("/*", NotFoundJSON())
 		})
 	})
-	
-	router.Group(func(apiRouter chi.Router){
+
+	router.Group(func(apiRouter chi.Router) {
 		apiRouter.Use(middleware.RedirectSlashes)
-		
-		apiRouter.Route("/v1", func(apiRouter chi.Router){
-			
+
+		apiRouter.Route("/v1", func(apiRouter chi.Router) {
+
 			apiRouter.Group(func(apiRouter chi.Router) {
 				AddEventRoutes(&apiRouter, eventController)
 				apiRouter.Handle("/*", NotFoundJSON())
@@ -32,7 +32,7 @@ func Router(eventController *controllers.EventController) http.Handler  {
 			apiRouter.Handle("/*", NotFoundJSON())
 		})
 	})
-		return router
+	return router
 }
 
 func AddEventRoutes(router *chi.Router, eventController *controllers.EventController) {
@@ -40,6 +40,22 @@ func AddEventRoutes(router *chi.Router, eventController *controllers.EventContro
 		apiRouter.Get(
 			"/",
 			eventController.FindAll(),
-			)
+		)
+		apiRouter.Get(
+			"/{id}",
+			eventController.FindOne(),
+		)
+		apiRouter.Post(
+			"/add",
+			eventController.AddCoordinate(),
+		)
+		apiRouter.Put(
+			"/update",
+			eventController.UpdateCoordinate(),
+		)
+		apiRouter.Get(
+			"/inverse",
+			eventController.InverseTask(),
+		)
 	})
 }

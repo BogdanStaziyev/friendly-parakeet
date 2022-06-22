@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"net/http"
 	"startUp/internal/domain/coordinates"
+	"strconv"
 )
 
 type EventController struct {
@@ -31,5 +33,50 @@ func (c *EventController) FindAll() http.HandlerFunc {
 		if err != nil {
 			fmt.Printf("EventController.FindAll: %s", err)
 		}
+	}
+}
+
+func (c *EventController) FindOne() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		id, err := strconv.ParseInt(chi.URLParam(request, "id"), 10, 64)
+		if err != nil {
+			fmt.Printf("CoordinateController.FindeOne(): %s", err)
+			err = internalServerError(writer, err)
+			if err != nil {
+				fmt.Printf("CoordinateController.FindeOne(): %s", err)
+			}
+			return
+		}
+		coordinates, err := (*c.service).FindOne(id)
+		if err != nil {
+			fmt.Printf("CoordinateController.FindeOne(): %s", err)
+			err = internalServerError(writer, err)
+			if err != nil {
+				fmt.Printf("CoordinateController.FindeOne(): %s", err)
+			}
+			return
+		}
+		err = success(writer, coordinates)
+		if err != nil {
+			fmt.Printf("CoordinateController.FindeOne(): %s", err)
+		}
+	}
+}
+
+func (c *EventController) AddCoordinate() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+
+	}
+}
+
+func (c *EventController) UpdateCoordinate() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+
+	}
+}
+
+func (c *EventController) InverseTask() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+
 	}
 }
