@@ -54,6 +54,16 @@ func (r *repository) FindOne(id int64) (*Coordinate, error) {
 }
 
 func (r *repository) AddCoordinate(coordinate Coordinate) error {
+	db, err := postgresql.Open(settings)
+	if err != nil {
+		log.Fatal("Open: ", err)
+	}
+	defer db.Close()
+	res, err := db.Collection("Coordinate").Insert(coordinate)
+	if err != nil {
+		fmt.Printf("Insert filed: %s", err)
+	}
+	fmt.Println(res)
 	return nil
 }
 

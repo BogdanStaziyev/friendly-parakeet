@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"net/http"
@@ -65,7 +66,16 @@ func (c *EventController) FindOne() http.HandlerFunc {
 
 func (c *EventController) AddCoordinate() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-
+		var coordinate coordinate.Coordinate
+		json.NewDecoder(request.Body).Decode(&coordinate)
+		err := (*c.service).AddCoordinate(coordinate)
+		if err != nil {
+			fmt.Printf("CoordinateController.AddCoordinate(): %s", err)
+			err = internalServerError(writer, err)
+			if err != nil {
+				fmt.Printf("CoordinateController.AddCoordinate(): %s", err)
+			}
+		}
 	}
 }
 
