@@ -3,9 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/upper/db/v4/adapter/postgresql"
+	"log"
 	"os"
 	"os/signal"
 	"runtime/debug"
+	"startUp/config"
 	"syscall"
 
 	"startUp/internal/domain/coordinates"
@@ -37,13 +40,27 @@ func main() {
 		fmt.Printf("sent cancel to all threads...")
 	}()
 
-	//Event
-	coordinateRepository := coordinate.NewRepository()
+	var conf = config.GetConfiguration()
+
+	ses, err := postgresql.Open(
+		postgresql.ConnectionURL{
+			User:     conf.DatabaseUser,
+			Host:     conf.DatabaseHost,
+			Password: conf.DatabasePassword,
+			Database: conf.DatabaseName,
+		})
+	if err != nil {
+		log.Fatalf("Unable to create new DB session: %q\n", err)
+	}
+	defer ses.Close()
+
+	//Coordinate
+	coordinateRepository := coordinate.NewRepository(&ses)
 	coordinateService := coordinate.NewService(&coordinateRepository)
 	coordinateController := controllers.NewEventController(&coordinateService)
 
 	//HTTP Server
-	err := http.Server(
+	err = http.Server(
 		ctx,
 		http.Router(
 			coordinateController,

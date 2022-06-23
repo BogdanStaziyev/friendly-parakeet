@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"log"
 	"net/http"
 	"startUp/internal/domain/coordinates"
+	"startUp/internal/domain/resources"
 	"startUp/internal/infra/http/validators"
 	"strconv"
 )
@@ -69,15 +70,21 @@ func (c *EventController) FindOne() http.HandlerFunc {
 
 func (c *EventController) AddCoordinate() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		var coordinate coordinate.Coordinate
-		json.NewDecoder(request.Body).Decode(&coordinate)
-		err := (*c.service).AddCoordinate(coordinate)
+		coordinate, err := c.validator.ValidateAndMap(request)
 		if err != nil {
-			fmt.Printf("CoordinateController.AddCoordinate(): %s", err)
-			err = internalServerError(writer, err)
-			if err != nil {
-				fmt.Printf("CoordinateController.AddCoordinate(): %s", err)
-			}
+			log.Print(writer, err)
+			return
+		}
+
+		createCoordinate, err := (*c.service).AddCoordinate(coordinate)
+		if err != nil {
+			internalServerError(writer, err)
+			return
+		}
+
+		err = success(writer, resources.MapDomainToCoordinateDTO(createCoordinate))
+		if err != nil {
+			log.Print(err)
 		}
 	}
 }
