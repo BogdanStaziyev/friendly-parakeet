@@ -74,6 +74,7 @@ func (c *EventController) AddCoordinate() http.HandlerFunc {
 		coordinate, err := c.validator.ValidateAndMap(request)
 		if err != nil {
 			log.Print(writer, err)
+			badRequest(writer, err)
 			return
 		}
 

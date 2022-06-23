@@ -25,6 +25,10 @@ func (t CoordinateValidator) ValidateAndMap(request *http.Request) (*coordinate.
 		log.Println(err)
 		return nil, err
 	}
-
+	err = t.validator.Struct(coordinateReq)
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
 	return mapCoordinateRequestDomain(&coordinateReq), nil
 }
