@@ -3,12 +3,12 @@ package resources
 import "startUp/internal/domain/coordinates"
 
 type CoordinateDTO struct {
-	Id      int     `json:"id" db:"id"`
-	MT      int     `json:"mt" db:"mt"`
-	Axis    string  `json:"axis" db:"axis"`
-	Horizon string  `json:"horizon" db:"horizon"`
-	X       float64 `json:"x" db:"x"`
-	Y       float64 `json:"y" db:"y"`
+	Id      int     `json:"id"`
+	MT      int     `json:"mt"`
+	Axis    string  `json:"axis"`
+	Horizon string  `json:"horizon"`
+	X       float64 `json:"x"`
+	Y       float64 `json:"y"`
 }
 
 func MapDomainToCoordinateDTO(coordinate *coordinate.Coordinate) *CoordinateDTO {

@@ -28,13 +28,13 @@ func (c *EventController) FindAll() http.HandlerFunc {
 		coordinates, err := (*c.service).FindAll()
 		if err != nil {
 			fmt.Printf("EventController.FindeAll(): %s", err)
+			err = internalServerError(w, err)
 			if err != nil {
 				fmt.Printf("EventController.FindAll(): %s", err)
 			}
 			return
 		}
-
-		err = success(w, coordinates)
+		err = success(w, resources.MapDomainCoordinateCollection(coordinates))
 		if err != nil {
 			fmt.Printf("EventController.FindAll: %s", err)
 		}
@@ -61,7 +61,8 @@ func (c *EventController) FindOne() http.HandlerFunc {
 			}
 			return
 		}
-		err = success(writer, coordinates)
+
+		err = success(writer, resources.MapDomainToCoordinateDTO(coordinates))
 		if err != nil {
 			fmt.Printf("CoordinateController.FindeOne(): %s", err)
 		}

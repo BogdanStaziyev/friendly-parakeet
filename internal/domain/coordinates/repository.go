@@ -3,24 +3,16 @@ package coordinate
 import (
 	"fmt"
 	"github.com/upper/db/v4"
-	"github.com/upper/db/v4/adapter/postgresql"
 	"log"
 )
 
 type coordinate struct {
-	Id      int     `json:"id" db:"id"`
-	MT      int     `json:"mt" db:"mt"`
-	Axis    string  `json:"axis" db:"axis"`
-	Horizon string  `json:"horizon" db:"horizon"`
-	X       float64 `json:"x" db:"x"`
-	Y       float64 `json:"y" db:"y"`
-}
-
-var settings = postgresql.ConnectionURL{
-	Database: `postgres`,
-	Host:     `localhost:54322`,
-	User:     `postgres`,
-	Password: `password`,
+	Id      int     `db:"id"`
+	MT      int     `db:"mt"`
+	Axis    string  `db:"axis"`
+	Horizon string  `db:"horizon"`
+	X       float64 `db:"x"`
+	Y       float64 `db:"y"`
 }
 
 type Repository interface {
@@ -42,50 +34,34 @@ func NewRepository(dbSession *db.Session) Repository {
 }
 
 func (r *repository) FindAll() ([]Coordinate, error) {
-	coordinates := make([]Coordinate, 1)
-	db, err := postgresql.Open(settings)
+	var coordinates []coordinate
+
+	err := r.coll.Find().All(&coordinates)
 	if err != nil {
-		log.Fatal("Open: ", err)
+		log.Fatal("coordinate.Find: ", err)
 	}
-	defer db.Close()
-	res := db.Collection("Coordinate")
-	err = res.Find().All(&coordinates)
-	return coordinates, nil
+	return mapCoordinateDbModelToDomainCollection(coordinates), nil
 }
 
 func (r *repository) FindOne(id int64) (*Coordinate, error) {
-	var coordinate Coordinate
-	db, err := postgresql.Open(settings)
+	var coordinates coordinate
+
+	err := r.coll.Find("id", id).One(&coordinates)
 	if err != nil {
-		log.Fatal("Open: ", err)
+		log.Fatal("coordinateCol.Find: ", err)
 	}
-	defer db.Close()
-	res := db.Collection("Coordinate").Find("id", id).One(&coordinate)
-	fmt.Println(res)
-	return &coordinate, nil
+	return mapCoordinateDbModelToDomain(&coordinates), nil
 }
 
 func (r *repository) AddCoordinate(coordinate *Coordinate) (*Coordinate, error) {
-	coord := mapCoordinateDbModel(coordinate)
-	err := r.coll.InsertReturning(coord)
+	coordinetes := mapCoordinateDbModel(coordinate)
+	err := r.coll.InsertReturning(coordinetes)
 	if err != nil {
 		return nil, fmt.Errorf("Coordinaterepository Create: %w", err)
 	}
 
-	return mapCoordinateDbModelToDomain(coord), nil
+	return mapCoordinateDbModelToDomain(coordinetes), nil
 }
-
-//db, err := postgresql.Open(settings)
-//if err != nil {
-//	log.Fatal("Open: ", err)
-//}
-//defer db.Close()
-//res, err := db.Collection("Coordinate").Insert(coordinate)
-//if err != nil {
-//	fmt.Printf("Insert filed: %s", err)
-//}
-//fmt.Println(res)
-//return nil
 
 func (r *repository) UpdateCoordinate(coordinate *Coordinate) error {
 	return nil
