@@ -3,8 +3,8 @@ package resources
 import "startUp/internal/domain/coordinates"
 
 type CoordinateDTO struct {
-	Id      int     `json:"id"`
-	MT      int     `json:"mt"`
+	Id      int64   `json:"id"`
+	MT      int64   `json:"mt"`
 	Axis    string  `json:"axis"`
 	Horizon string  `json:"horizon"`
 	X       float64 `json:"x"`

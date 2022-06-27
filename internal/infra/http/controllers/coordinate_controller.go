@@ -71,14 +71,14 @@ func (c *EventController) FindOne() http.HandlerFunc {
 
 func (c *EventController) AddCoordinate() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		coordinate, err := c.validator.ValidateAndMap(request)
+		coordinates, err := c.validator.ValidateAndMap(request)
 		if err != nil {
 			log.Print(writer, err)
 			badRequest(writer, err)
 			return
 		}
 
-		createCoordinate, err := (*c.service).AddCoordinate(coordinate)
+		createCoordinate, err := (*c.service).AddCoordinate(coordinates)
 		if err != nil {
 			internalServerError(writer, err)
 			return

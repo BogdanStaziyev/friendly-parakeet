@@ -1,8 +1,8 @@
 package coordinate
 
 type Coordinate struct {
-	Id      int
-	MT      int
+	Id      int64
+	MT      int64
 	Axis    string
 	Horizon string
 	X       float64

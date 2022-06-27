@@ -7,8 +7,8 @@ import (
 )
 
 type coordinate struct {
-	Id      int     `db:"id"`
-	MT      int     `db:"mt"`
+	Id      int64   `db:"id, omitempty"`
+	MT      int64   `db:"mt"`
 	Axis    string  `db:"axis"`
 	Horizon string  `db:"horizon"`
 	X       float64 `db:"x"`
@@ -29,7 +29,7 @@ type repository struct {
 
 func NewRepository(dbSession *db.Session) Repository {
 	return &repository{
-		coll: (*dbSession).Collection("Coordinate"),
+		coll: (*dbSession).Collection("coordinate"),
 	}
 }
 
