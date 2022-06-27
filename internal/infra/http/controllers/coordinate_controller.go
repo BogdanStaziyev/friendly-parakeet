@@ -93,7 +93,19 @@ func (c *EventController) AddCoordinate() http.HandlerFunc {
 
 func (c *EventController) UpdateCoordinate() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-
+		coordinates, err := c.validator.ValidateAndMap(request)
+		if err != nil {
+			log.Println(writer, err)
+			badRequest(writer, err)
+			return
+		}
+		err = (*c.service).UpdateCoordinate(coordinates)
+		if err != nil {
+			log.Println(writer, err)
+			internalServerError(writer, err)
+			return
+		}
+		ok(writer)
 	}
 }
 

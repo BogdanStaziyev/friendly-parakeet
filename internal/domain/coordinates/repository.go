@@ -64,6 +64,13 @@ func (r *repository) AddCoordinate(coordinate *Coordinate) (*Coordinate, error) 
 }
 
 func (r *repository) UpdateCoordinate(coordinate *Coordinate) error {
+	coordinates := mapCoordinateDbModel(coordinate)
+
+	err := r.coll.Find(coordinates.Id).Update(coordinates)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
 	return nil
 }
 
