@@ -22,7 +22,7 @@ type Repository interface {
 	DeleteCoordinate(id int64) error
 	FindAll() ([]Coordinate, error)
 	FindOne(id int64) (*Coordinate, error)
-	InverseTask(firstId, secondId int64) (string, error)
+	InverseTask(firstId, secondId int64) (string, error, *Coordinate, *Coordinate)
 }
 
 type repository struct {
@@ -40,7 +40,7 @@ func (r *repository) AddCoordinate(coordinate *Coordinate) (*Coordinate, error) 
 
 	err := r.coll.InsertReturning(coordinates)
 	if err != nil {
-		return nil, fmt.Errorf("Coordinaterepository Create: %w", err)
+		return nil, fmt.Errorf("CoordinaterepositoryCreate: %w", err)
 	}
 
 	return mapCoordinateDbModelToDomain(coordinates), nil
@@ -87,7 +87,7 @@ func (r *repository) FindOne(id int64) (*Coordinate, error) {
 	return mapCoordinateDbModelToDomain(&coordinates), nil
 }
 
-func (r *repository) InverseTask(firstId, secondId int64) (string, error) {
+func (r *repository) InverseTask(firstId, secondId int64) (string, error, *Coordinate, *Coordinate) {
 	var coordinateOne, coordinateTwo coordinate
 
 	firstErr := r.coll.Find("id", firstId).One(&coordinateOne)
@@ -99,7 +99,7 @@ func (r *repository) InverseTask(firstId, secondId int64) (string, error) {
 		log.Fatal("repository Invert second: ", secondErr)
 	}
 	n, u, m := atanNumber(coordinateOne.X, coordinateOne.Y, coordinateTwo.X, coordinateTwo.Y)
-	return fmt.Sprint("result: ", n, "° ", u, "′ ", m, "″ "), nil
+	return fmt.Sprint("Результат обчислення зворотньої геодезичної задачі : ", n, "° ", u, "′ ", m, "″ "), nil, mapCoordinateDbModelToDomain(&coordinateOne), mapCoordinateDbModelToDomain(&coordinateTwo)
 }
 
 func atanNumber(x1, y1, x2, y2 float64) (int, int, int) {
@@ -111,8 +111,7 @@ func atanNumber(x1, y1, x2, y2 float64) (int, int, int) {
 	deg := int(res)
 	min1 := (res - float64(deg)) * 60
 	min := int(min1)
-	sec1 := int((min1 - float64(min)) * 60)
-	sec := int(sec1)
+	sec := int((min1 - float64(min)) * 60)
 	if x < 0 && y > 0 {
 		deg = 179 + deg
 		min = 59 + min

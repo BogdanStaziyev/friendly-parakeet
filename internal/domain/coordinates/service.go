@@ -8,7 +8,7 @@ type Service interface {
 	DeleteCoordinate(id int64) error
 	FindAll() ([]Coordinate, error)
 	FindOne(id int64) (*Coordinate, error)
-	InverseTask(firstId, secondId int64) (string, error)
+	InverseTask(firstId, secondId int64) (string, error, *Coordinate, *Coordinate)
 }
 
 type service struct {
@@ -61,10 +61,10 @@ func (s *service) FindOne(id int64) (*Coordinate, error) {
 	return coordinates, nil
 }
 
-func (s *service) InverseTask(firstId, secondId int64) (string, error) {
-	res, err := (*s.repo).InverseTask(firstId, secondId)
+func (s *service) InverseTask(firstId, secondId int64) (string, error, *Coordinate, *Coordinate) {
+	res, err, coordinateOne, coordinateTwo := (*s.repo).InverseTask(firstId, secondId)
 	if err != nil {
-		return res, fmt.Errorf("servis Invertask: %w", err)
+		return res, fmt.Errorf("servis Invertask: %w", err), coordinateOne, coordinateTwo
 	}
-	return res, nil
+	return res, nil, coordinateOne, coordinateTwo
 }

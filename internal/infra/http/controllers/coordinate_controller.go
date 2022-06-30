@@ -148,7 +148,7 @@ func (c *CoordinateController) InverseTask() http.HandlerFunc {
 			}
 			return
 		}
-		coordinatAxis, err := (*c.service).InverseTask(firstId, secondId)
+		coordinateAxis, err, coordinateOne, coordinateTwo := (*c.service).InverseTask(firstId, secondId)
 		if err != nil {
 			fmt.Printf("CoordinateController.InverseFirst(): %s", err)
 			err = internalServerError(writer, err)
@@ -157,7 +157,15 @@ func (c *CoordinateController) InverseTask() http.HandlerFunc {
 			}
 			return
 		}
-		err = success(writer, coordinatAxis)
+		err = success(writer, coordinateAxis)
+		if err != nil {
+			fmt.Printf("CoordinateController.InverseFirst(): %s", err)
+		}
+		err = success(writer, coordinateOne)
+		if err != nil {
+			fmt.Printf("CoordinateController.InverseFirst(): %s", err)
+		}
+		err = success(writer, coordinateTwo)
 		if err != nil {
 			fmt.Printf("CoordinateController.InverseFirst(): %s", err)
 		}
