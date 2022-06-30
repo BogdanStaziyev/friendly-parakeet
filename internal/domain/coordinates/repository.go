@@ -107,7 +107,7 @@ func atanNumber(x1, y1, x2, y2 float64) (int, int, int) {
 	y := y2 - y1
 	num := y / x
 	res := math.Atan(num)
-	res *= (180 / math.Pi)
+	res *= 180 / math.Pi
 	deg := int(res)
 	min1 := (res - float64(deg)) * 60
 	min := int(min1)
