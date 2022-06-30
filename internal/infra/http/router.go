@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func Router(eventController *controllers.EventController) http.Handler {
+func Router(eventController *controllers.CoordinateController) http.Handler {
 	router := chi.NewRouter()
 
 	//Health
@@ -35,27 +35,31 @@ func Router(eventController *controllers.EventController) http.Handler {
 	return router
 }
 
-func AddEventRoutes(router *chi.Router, eventController *controllers.EventController) {
+func AddEventRoutes(router *chi.Router, coordinateController *controllers.CoordinateController) {
 	(*router).Route("/coordinates", func(apiRouter chi.Router) {
 		apiRouter.Get(
 			"/",
-			eventController.FindAll(),
+			coordinateController.FindAll(),
 		)
 		apiRouter.Get(
 			"/{id}",
-			eventController.FindOne(),
+			coordinateController.FindOne(),
 		)
 		apiRouter.Post(
 			"/add",
-			eventController.AddCoordinate(),
+			coordinateController.AddCoordinate(),
 		)
 		apiRouter.Put(
 			"/update",
-			eventController.UpdateCoordinate(),
+			coordinateController.UpdateCoordinate(),
+		)
+		apiRouter.Delete(
+			"/{id}",
+			coordinateController.DeleteCoordinate(),
 		)
 		apiRouter.Get(
-			"/inverse",
-			eventController.InverseTask(),
+			"/{firstId}/{secondId}",
+			coordinateController.InverseTask(),
 		)
 	})
 }

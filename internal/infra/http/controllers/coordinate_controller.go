@@ -11,19 +11,78 @@ import (
 	"strconv"
 )
 
-type EventController struct {
+type CoordinateController struct {
 	service   *coordinate.Service
 	validator *validators.CoordinateValidator
 }
 
-func NewEventController(s *coordinate.Service) *EventController {
-	return &EventController{
+func NewEventController(s *coordinate.Service) *CoordinateController {
+	return &CoordinateController{
 		service:   s,
 		validator: validators.NewCoordinateValidator(),
 	}
 }
 
-func (c *EventController) FindAll() http.HandlerFunc {
+func (c *CoordinateController) AddCoordinate() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		coordinates, err := c.validator.ValidateAndMap(request)
+		if err != nil {
+			log.Print(writer, err)
+			badRequest(writer, err)
+			return
+		}
+
+		createCoordinate, err := (*c.service).AddCoordinate(coordinates)
+		if err != nil {
+			internalServerError(writer, err)
+			return
+		}
+
+		err = success(writer, resources.MapDomainToCoordinateDTO(createCoordinate))
+		if err != nil {
+			log.Print(err)
+		}
+	}
+}
+
+func (c *CoordinateController) UpdateCoordinate() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		coordinates, err := c.validator.ValidateAndMap(request)
+		if err != nil {
+			log.Println(writer, err)
+			badRequest(writer, err)
+			return
+		}
+		err = (*c.service).UpdateCoordinate(coordinates)
+		if err != nil {
+			log.Println(writer, err)
+			internalServerError(writer, err)
+			return
+		}
+		ok(writer)
+	}
+}
+
+func (c *CoordinateController) DeleteCoordinate() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		id, err := strconv.ParseInt(chi.URLParam(request, "id"), 10, 64)
+		if err != nil {
+			fmt.Printf("EventController.DeleteCoordinate(): %s", err)
+			badRequest(writer, err)
+			return
+		}
+
+		err = (*c.service).DeleteCoordinate(id)
+		if err != nil {
+			fmt.Printf("EventController.DeleteCoordinate(): %s", err)
+			internalServerError(writer, err)
+			return
+		}
+		ok(writer)
+	}
+}
+
+func (c *CoordinateController) FindAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		coordinates, err := (*c.service).FindAll()
 		if err != nil {
@@ -41,7 +100,7 @@ func (c *EventController) FindAll() http.HandlerFunc {
 	}
 }
 
-func (c *EventController) FindOne() http.HandlerFunc {
+func (c *CoordinateController) FindOne() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		id, err := strconv.ParseInt(chi.URLParam(request, "id"), 10, 64)
 		if err != nil {
@@ -69,48 +128,38 @@ func (c *EventController) FindOne() http.HandlerFunc {
 	}
 }
 
-func (c *EventController) AddCoordinate() http.HandlerFunc {
+func (c *CoordinateController) InverseTask() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		coordinates, err := c.validator.ValidateAndMap(request)
+		firstId, err := strconv.ParseInt(chi.URLParam(request, "firstId"), 10, 64)
 		if err != nil {
-			log.Print(writer, err)
-			badRequest(writer, err)
+			fmt.Printf("CoordinateController.InverseFirst(): %s", err)
+			err = internalServerError(writer, err)
+			if err != nil {
+				fmt.Printf("CoordinateController.InverseFirst(): %s", err)
+			}
 			return
 		}
-
-		createCoordinate, err := (*c.service).AddCoordinate(coordinates)
+		secondId, err := strconv.ParseInt(chi.URLParam(request, "secondId"), 10, 64)
 		if err != nil {
-			internalServerError(writer, err)
+			fmt.Printf("CoordinateController.InverseSecond(): %s", err)
+			err = internalServerError(writer, err)
+			if err != nil {
+				fmt.Printf("CoordinateController.InverseSecond(): %s", err)
+			}
 			return
 		}
-
-		err = success(writer, resources.MapDomainToCoordinateDTO(createCoordinate))
+		coordinatAxis, err := (*c.service).InverseTask(firstId, secondId)
 		if err != nil {
-			log.Print(err)
-		}
-	}
-}
-
-func (c *EventController) UpdateCoordinate() http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
-		coordinates, err := c.validator.ValidateAndMap(request)
-		if err != nil {
-			log.Println(writer, err)
-			badRequest(writer, err)
+			fmt.Printf("CoordinateController.InverseFirst(): %s", err)
+			err = internalServerError(writer, err)
+			if err != nil {
+				fmt.Printf("CoordinateController.InverseFirst(): %s", err)
+			}
 			return
 		}
-		err = (*c.service).UpdateCoordinate(coordinates)
+		err = success(writer, coordinatAxis)
 		if err != nil {
-			log.Println(writer, err)
-			internalServerError(writer, err)
-			return
+			fmt.Printf("CoordinateController.InverseFirst(): %s", err)
 		}
-		ok(writer)
-	}
-}
-
-func (c *EventController) InverseTask() http.HandlerFunc {
-	return func(writer http.ResponseWriter, request *http.Request) {
-
 	}
 }
