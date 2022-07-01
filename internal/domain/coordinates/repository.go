@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/upper/db/v4"
 	"log"
-	"math"
 )
 
 type coordinate struct {
@@ -89,7 +88,6 @@ func (r *repository) FindOne(id int64) (*Coordinate, error) {
 
 func (r *repository) InverseTask(firstId, secondId int64) (string, error, *Coordinate, *Coordinate) {
 	var coordinateOne, coordinateTwo coordinate
-
 	firstErr := r.coll.Find("id", firstId).One(&coordinateOne)
 	if firstErr != nil {
 		log.Fatal("repository Invert first: ", firstErr)
@@ -98,33 +96,7 @@ func (r *repository) InverseTask(firstId, secondId int64) (string, error, *Coord
 	if secondErr != nil {
 		log.Fatal("repository Invert second: ", secondErr)
 	}
-	n, u, m := atanNumber(coordinateOne.X, coordinateOne.Y, coordinateTwo.X, coordinateTwo.Y)
-	return fmt.Sprint("Результат обчислення зворотньої геодезичної задачі : ", n, "° ", u, "′ ", m, "″ "), nil, mapCoordinateDbModelToDomain(&coordinateOne), mapCoordinateDbModelToDomain(&coordinateTwo)
-}
-
-func atanNumber(x1, y1, x2, y2 float64) (int, int, int) {
-	x := x2 - x1
-	y := y2 - y1
-	num := y / x
-	res := math.Atan(num)
-	res *= 180 / math.Pi
-	deg := int(res)
-	min1 := (res - float64(deg)) * 60
-	min := int(min1)
-	sec := int((min1 - float64(min)) * 60)
-	if x < 0 && y > 0 {
-		deg = 179 + deg
-		min = 59 + min
-		sec = 60 + sec
-	} else if x < 0 && y < 0 {
-		deg = 180 + deg
-	} else if x > 0 && y < 0 {
-		deg = 359 + deg
-		min = 59 + min
-		sec = 60 + sec
-	}
-	fmt.Println(deg, min, sec)
-	return deg, min, sec
+	return fmt.Sprint("Результат обчислення зворотньої геодезичної задачі: "), nil, mapCoordinateDbModelToDomain(&coordinateOne), mapCoordinateDbModelToDomain(&coordinateTwo)
 }
 
 func mapCoordinateDbModelToDomain(coordinate *coordinate) *Coordinate {

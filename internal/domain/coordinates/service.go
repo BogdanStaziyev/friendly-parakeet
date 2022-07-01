@@ -1,6 +1,10 @@
 package coordinate
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"math"
+)
 
 type Service interface {
 	AddCoordinate(coordinate *Coordinate) (*Coordinate, error)
@@ -66,5 +70,35 @@ func (s *service) InverseTask(firstId, secondId int64) (string, error, *Coordina
 	if err != nil {
 		return res, fmt.Errorf("servis Invertask: %w", err), coordinateOne, coordinateTwo
 	}
-	return res, nil, coordinateOne, coordinateTwo
+	n, u, m := atanNumber(coordinateOne.X, coordinateOne.Y, coordinateTwo.X, coordinateTwo.Y)
+	return fmt.Sprint(res, n, "° ", u, "′ ", m, "″ "), nil, coordinateOne, coordinateTwo
+}
+
+func atanNumber(x1, y1, x2, y2 float64) (int, int, int) {
+	const radius float64 = 180
+	const degree, minutes, seconds int = 180, 60, 60
+	x := x2 - x1
+	y := y2 - y1
+	num := y / x
+	res := math.Atan(num)
+	res *= radius / math.Pi
+	deg := int(res)
+	min1 := (res - float64(deg)) * 60
+	min := int(min1)
+	sec := int((min1 - float64(min)) * 60)
+	if x < 0 && y > 0 {
+		deg = (degree - 1) + deg
+		min = (minutes - 1) + min
+		sec = seconds + sec
+	} else if x < 0 && y < 0 {
+		deg = degree + deg
+	} else if x > 0 && y < 0 {
+		deg = ((degree * 2) - 1) + deg
+		min = (minutes - 1) + min
+		sec = seconds + sec
+	}
+	if deg > 360 || min > 60 || sec > 60 {
+		log.Println("error compilation atan")
+	}
+	return deg, min, sec
 }
