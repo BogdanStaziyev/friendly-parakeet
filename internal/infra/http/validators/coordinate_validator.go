@@ -5,7 +5,7 @@ import (
 	"github.com/go-playground/validator"
 	"log"
 	"net/http"
-	"startUp/internal/domain/coordinates"
+	"startUp/internal/domain"
 )
 
 type CoordinateValidator struct {
@@ -18,7 +18,7 @@ func NewCoordinateValidator() *CoordinateValidator {
 	}
 }
 
-func (t CoordinateValidator) ValidateAndMap(request *http.Request) (*coordinate.Coordinate, error) {
+func (t CoordinateValidator) ValidateAndMap(request *http.Request) (*domain.Coordinate, error) {
 	var coordinateReq coordinateRequest
 	err := json.NewDecoder(request.Body).Decode(&coordinateReq)
 	if err != nil {

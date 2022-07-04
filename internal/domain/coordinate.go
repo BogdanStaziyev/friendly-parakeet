@@ -1,4 +1,4 @@
-package coordinate
+package domain
 
 type Coordinate struct {
 	Id      int64

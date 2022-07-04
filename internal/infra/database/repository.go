@@ -1,9 +1,10 @@
-package coordinate
+package database
 
 import (
 	"fmt"
 	"github.com/upper/db/v4"
 	"log"
+	"startUp/internal/domain"
 )
 
 type coordinate struct {
@@ -16,12 +17,12 @@ type coordinate struct {
 }
 
 type Repository interface {
-	AddCoordinate(coordinate *Coordinate) (*Coordinate, error)
-	UpdateCoordinate(coordinate *Coordinate) error
+	AddCoordinate(coordinate *domain.Coordinate) (*domain.Coordinate, error)
+	UpdateCoordinate(coordinate *domain.Coordinate) error
 	DeleteCoordinate(id int64) error
-	FindAll() ([]Coordinate, error)
-	FindOne(id int64) (*Coordinate, error)
-	InverseTask(firstId, secondId int64) (string, error, *Coordinate, *Coordinate)
+	FindAll() ([]domain.Coordinate, error)
+	FindOne(id int64) (*domain.Coordinate, error)
+	InverseTask(firstId, secondId int64) (string, error, *domain.Coordinate, *domain.Coordinate)
 }
 
 type repository struct {
@@ -34,7 +35,7 @@ func NewRepository(dbSession *db.Session) Repository {
 	}
 }
 
-func (r *repository) AddCoordinate(coordinate *Coordinate) (*Coordinate, error) {
+func (r *repository) AddCoordinate(coordinate *domain.Coordinate) (*domain.Coordinate, error) {
 	coordinates := mapCoordinateDbModel(coordinate)
 
 	err := r.coll.InsertReturning(coordinates)
@@ -45,7 +46,7 @@ func (r *repository) AddCoordinate(coordinate *Coordinate) (*Coordinate, error) 
 	return mapCoordinateDbModelToDomain(coordinates), nil
 }
 
-func (r *repository) UpdateCoordinate(coordinate *Coordinate) error {
+func (r *repository) UpdateCoordinate(coordinate *domain.Coordinate) error {
 	coordinates := mapCoordinateDbModel(coordinate)
 
 	err := r.coll.Find(coordinates.Id).Update(coordinates)
@@ -66,7 +67,7 @@ func (r *repository) DeleteCoordinate(id int64) error {
 	return nil
 }
 
-func (r *repository) FindAll() ([]Coordinate, error) {
+func (r *repository) FindAll() ([]domain.Coordinate, error) {
 	var coordinates []coordinate
 
 	err := r.coll.Find().All(&coordinates)
@@ -76,7 +77,7 @@ func (r *repository) FindAll() ([]Coordinate, error) {
 	return mapCoordinateDbModelToDomainCollection(coordinates), nil
 }
 
-func (r *repository) FindOne(id int64) (*Coordinate, error) {
+func (r *repository) FindOne(id int64) (*domain.Coordinate, error) {
 	var coordinates coordinate
 
 	err := r.coll.Find("id", id).One(&coordinates)
@@ -86,7 +87,7 @@ func (r *repository) FindOne(id int64) (*Coordinate, error) {
 	return mapCoordinateDbModelToDomain(&coordinates), nil
 }
 
-func (r *repository) InverseTask(firstId, secondId int64) (string, error, *Coordinate, *Coordinate) {
+func (r *repository) InverseTask(firstId, secondId int64) (string, error, *domain.Coordinate, *domain.Coordinate) {
 	var coordinateOne, coordinateTwo coordinate
 	firstErr := r.coll.Find("id", firstId).One(&coordinateOne)
 	if firstErr != nil {
@@ -99,8 +100,8 @@ func (r *repository) InverseTask(firstId, secondId int64) (string, error, *Coord
 	return fmt.Sprint("Результат обчислення зворотньої геодезичної задачі: "), nil, mapCoordinateDbModelToDomain(&coordinateOne), mapCoordinateDbModelToDomain(&coordinateTwo)
 }
 
-func mapCoordinateDbModelToDomain(coordinate *coordinate) *Coordinate {
-	return &Coordinate{
+func mapCoordinateDbModelToDomain(coordinate *coordinate) *domain.Coordinate {
+	return &domain.Coordinate{
 		Id:      coordinate.Id,
 		MT:      coordinate.MT,
 		Axis:    coordinate.Axis,
@@ -110,8 +111,8 @@ func mapCoordinateDbModelToDomain(coordinate *coordinate) *Coordinate {
 	}
 }
 
-func mapCoordinateDbModelToDomainCollection(coordinate []coordinate) []Coordinate {
-	var result []Coordinate
+func mapCoordinateDbModelToDomainCollection(coordinate []coordinate) []domain.Coordinate {
+	var result []domain.Coordinate
 	for _, c := range coordinate {
 		newCoordinate := mapCoordinateDbModelToDomain(&c)
 		result = append(result, *newCoordinate)
@@ -119,7 +120,7 @@ func mapCoordinateDbModelToDomainCollection(coordinate []coordinate) []Coordinat
 	return result
 }
 
-func mapCoordinateDbModel(coord *Coordinate) *coordinate {
+func mapCoordinateDbModel(coord *domain.Coordinate) *coordinate {
 	return &coordinate{
 		Id:      coord.Id,
 		MT:      coord.MT,

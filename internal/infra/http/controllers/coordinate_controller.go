@@ -5,18 +5,18 @@ import (
 	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
-	"startUp/internal/domain/coordinates"
-	"startUp/internal/domain/resources"
+	"startUp/internal/app"
+	"startUp/internal/infra/http/resources"
 	"startUp/internal/infra/http/validators"
 	"strconv"
 )
 
 type CoordinateController struct {
-	service   *coordinate.Service
+	service   *app.Service
 	validator *validators.CoordinateValidator
 }
 
-func NewEventController(s *coordinate.Service) *CoordinateController {
+func NewEventController(s *app.Service) *CoordinateController {
 	return &CoordinateController{
 		service:   s,
 		validator: validators.NewCoordinateValidator(),

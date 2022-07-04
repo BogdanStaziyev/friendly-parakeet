@@ -1,6 +1,8 @@
 package resources
 
-import "startUp/internal/domain/coordinates"
+import (
+	"startUp/internal/domain"
+)
 
 type CoordinateDTO struct {
 	Id      int64   `json:"id"`
@@ -11,7 +13,7 @@ type CoordinateDTO struct {
 	Y       float64 `json:"y"`
 }
 
-func MapDomainToCoordinateDTO(coordinate *coordinate.Coordinate) *CoordinateDTO {
+func MapDomainToCoordinateDTO(coordinate *domain.Coordinate) *CoordinateDTO {
 	return &CoordinateDTO{
 		Id:      coordinate.Id,
 		MT:      coordinate.MT,
@@ -22,7 +24,7 @@ func MapDomainToCoordinateDTO(coordinate *coordinate.Coordinate) *CoordinateDTO 
 	}
 }
 
-func MapDomainCoordinateCollection(coordinate []coordinate.Coordinate) *[]CoordinateDTO {
+func MapDomainCoordinateCollection(coordinate []domain.Coordinate) *[]CoordinateDTO {
 	var result []CoordinateDTO
 	for _, t := range coordinate {
 		dto := MapDomainToCoordinateDTO(&t)

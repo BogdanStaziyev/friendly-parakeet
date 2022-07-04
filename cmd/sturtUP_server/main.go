@@ -9,9 +9,10 @@ import (
 	"os/signal"
 	"runtime/debug"
 	"startUp/config"
+	"startUp/internal/app"
+	"startUp/internal/infra/database"
 	"syscall"
 
-	"startUp/internal/domain/coordinates"
 	"startUp/internal/infra/http"
 	"startUp/internal/infra/http/controllers"
 )
@@ -55,8 +56,8 @@ func main() {
 	defer ses.Close()
 
 	//Coordinate
-	coordinateRepository := coordinate.NewRepository(&ses)
-	coordinateService := coordinate.NewService(&coordinateRepository)
+	coordinateRepository := database.NewRepository(&ses)
+	coordinateService := app.NewService(&coordinateRepository)
 	coordinateController := controllers.NewEventController(&coordinateService)
 
 	//HTTP Server

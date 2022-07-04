@@ -1,6 +1,8 @@
 package validators
 
-import "startUp/internal/domain/coordinates"
+import (
+	"startUp/internal/domain"
+)
 
 type coordinateRequest struct {
 	MT      int64   `json:"mt" validate:"required"`
@@ -10,8 +12,8 @@ type coordinateRequest struct {
 	Y       float64 `json:"y" validate:"required"`
 }
 
-func mapCoordinateRequestDomain(coordinateRequest *coordinateRequest) *coordinate.Coordinate {
-	return &coordinate.Coordinate{
+func mapCoordinateRequestDomain(coordinateRequest *coordinateRequest) *domain.Coordinate {
+	return &domain.Coordinate{
 		MT:      coordinateRequest.MT,
 		Axis:    coordinateRequest.Axis,
 		Horizon: coordinateRequest.Horizon,
