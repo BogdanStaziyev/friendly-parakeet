@@ -97,7 +97,7 @@ func (r *repository) InverseTask(firstId, secondId int64) (string, error, *domai
 	if secondErr != nil {
 		log.Fatal("repository Invert second: ", secondErr)
 	}
-	return fmt.Sprint("Результат обчислення зворотньої геодезичної задачі: "), nil, mapCoordinateDbModelToDomain(&coordinateOne), mapCoordinateDbModelToDomain(&coordinateTwo)
+	return "Результат обчислення зворотньої геодезичної задачі: ", nil, mapCoordinateDbModelToDomain(&coordinateOne), mapCoordinateDbModelToDomain(&coordinateTwo)
 }
 
 func mapCoordinateDbModelToDomain(coordinate *coordinate) *domain.Coordinate {

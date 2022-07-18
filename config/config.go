@@ -1,17 +1,35 @@
 package config
 
-type configuration struct {
-	DatabaseName     string
-	DatabaseHost     string
-	DatabaseUser     string
-	DatabasePassword string
+import "os"
+
+type Configuration struct {
+	DatabaseName        string
+	DatabaseHost        string
+	DatabaseUser        string
+	DatabasePassword    string
+	MigrateToVersion    string
+	MigrationLocation   string
+	FileStorageLocation string
 }
 
-func GetConfiguration() *configuration {
-	return &configuration{
-		DatabaseName:     `postgres`,
-		DatabaseHost:     `localhost:54322`,
-		DatabaseUser:     `postgres`,
-		DatabasePassword: `password`,
+func GetConfiguration() *Configuration {
+	migrationLocation, set := os.LookupEnv("MIGRATION_LOCATION")
+	if !set {
+		migrationLocation = "migration"
+	}
+
+	migrateToVersion, set := os.LookupEnv("MIGRATE")
+	if !set {
+		migrateToVersion = "latest"
+	}
+
+	return &Configuration{
+		DatabaseName:        `coordinate`,
+		DatabaseHost:        `localhost:54322`,
+		DatabaseUser:        `postgres`,
+		DatabasePassword:    `password`,
+		MigrateToVersion:    migrateToVersion,
+		MigrationLocation:   migrationLocation,
+		FileStorageLocation: "file_storage",
 	}
 }

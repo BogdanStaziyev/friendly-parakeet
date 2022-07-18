@@ -43,6 +43,11 @@ func main() {
 
 	var conf = config.GetConfiguration()
 
+	err := database.Migrate(conf)
+	if err != nil {
+		log.Fatalf("Unable to apply migration: %q\n", err)
+	}
+
 	ses, err := postgresql.Open(
 		postgresql.ConnectionURL{
 			User:     conf.DatabaseUser,

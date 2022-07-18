@@ -7,15 +7,15 @@ import (
 	"time"
 )
 
-func Server(ctx context.Context, router http.Handler) error{
+func Server(ctx context.Context, router http.Handler) error {
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%d", 8080),
+		Addr:    fmt.Sprintf(":%d", 8080),
 		Handler: router,
 	}
 
 	errServerCh := make(chan error)
 	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed{
+		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 			errServerCh <- err
 		}
 	}()
@@ -24,7 +24,7 @@ func Server(ctx context.Context, router http.Handler) error{
 	case <-ctx.Done():
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 		defer cancel()
-		if err := srv.Shutdown(shutdownCtx); err != nil{
+		if err := srv.Shutdown(shutdownCtx); err != nil {
 			return fmt.Errorf("error during server shutdown: %w", err)
 		}
 	case err := <-errServerCh:

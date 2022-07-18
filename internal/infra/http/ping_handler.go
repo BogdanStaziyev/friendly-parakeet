@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func PingHandler() http.HandlerFunc{
+func PingHandler() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusOK)
