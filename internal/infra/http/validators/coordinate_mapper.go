@@ -5,6 +5,7 @@ import (
 )
 
 type coordinateRequest struct {
+	ID      int64   `json:"id"`
 	MT      int64   `json:"mt" validate:"required"`
 	Axis    string  `json:"axis" validate:"required"`
 	Horizon string  `json:"horizon" validate:"required"`
@@ -14,6 +15,7 @@ type coordinateRequest struct {
 
 func mapCoordinateRequestDomain(coordinateRequest *coordinateRequest) *domain.Coordinate {
 	return &domain.Coordinate{
+		Id:      coordinateRequest.ID,
 		MT:      coordinateRequest.MT,
 		Axis:    coordinateRequest.Axis,
 		Horizon: coordinateRequest.Horizon,
