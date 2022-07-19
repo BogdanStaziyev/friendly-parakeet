@@ -61,7 +61,7 @@ func (s *service) FindAll() ([]domain.Coordinate, error) {
 func (s *service) FindOne(id int64) (*domain.Coordinate, error) {
 	coordinates, err := (*s.repo).FindOne(id)
 	if err != nil {
-		return nil, fmt.Errorf("servis FindeOne: %w", err)
+		return nil, fmt.Errorf("service FindOne: %w", err)
 	}
 	return coordinates, nil
 }
@@ -73,7 +73,7 @@ func (s *service) InverseTask(firstId, secondId int64) (string, error, *domain.C
 		return res, fmt.Errorf("servis Invertask: %w", err), coordinateOne, coordinateTwo
 	}
 	if coordinateOne.X == coordinateTwo.X || coordinateOne.Y == coordinateTwo.Y {
-		return fmt.Sprint("Error Service same values used: "), nil, coordinateOne, coordinateTwo
+		return "Error Service same values used: ", nil, coordinateOne, coordinateTwo
 	}
 	n, u, m = atanNumber(coordinateOne.X, coordinateOne.Y, coordinateTwo.X, coordinateTwo.Y)
 	return fmt.Sprint(res, n, "° ", u, "′ ", m, "″ "), nil, coordinateOne, coordinateTwo

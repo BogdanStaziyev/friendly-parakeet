@@ -7,6 +7,8 @@ import (
 	"startUp/internal/domain"
 )
 
+const CoordinateTable = "coordinate"
+
 type coordinate struct {
 	Id      int64   `db:"id,omitempty"`
 	MT      int64   `db:"mt"`
@@ -82,7 +84,7 @@ func (r *repository) FindOne(id int64) (*domain.Coordinate, error) {
 
 	err := r.coll.Find("id", id).One(&coordinates)
 	if err != nil {
-		log.Fatal("coordinateCol.Find: ", err)
+		return nil, fmt.Errorf("coordinateRepository FindOne: %w", err)
 	}
 	return mapCoordinateDbModelToDomain(&coordinates), nil
 }

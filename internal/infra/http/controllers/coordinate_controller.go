@@ -104,7 +104,7 @@ func (c *CoordinateController) FindOne() http.HandlerFunc {
 		}
 		coordinates, err := (*c.service).FindOne(id)
 		if err != nil {
-			log.Println("CoordinateController.FindeOne(): ", err)
+			log.Println("coordinateService error", err)
 			if strings.HasSuffix(err.Error(), "upper: no more rows in this result set") {
 				notFound(writer, err)
 			} else {
