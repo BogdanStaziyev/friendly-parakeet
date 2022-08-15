@@ -86,6 +86,48 @@ var coordinateControllerTest = []*requestTest{
 		`service FindOne: coordinateRepository FindOne: upper: no more rows in this result set`,
 		"wrong single task response",
 	},
+	{
+		"Create object 111",
+		func(req *http.Request, migrator *migrate.Migrate) {},
+		"/v1/coordinates/add",
+		"POST",
+		`{
+			"mt": 111,
+			"axis": "188",
+			"horizon": "1340",
+			"x": 25994.292,
+			"y": 35476.775
+		}`,
+		http.StatusOK,
+		`{"id":\d+,"mt":111,"axis":"188","horizon":"1340","x":25994.292,"y":35476.775}`,
+		"wrong single task response",
+	},
+	{
+		"Create object 109",
+		func(req *http.Request, migrator *migrate.Migrate) {},
+		"/v1/coordinates/add",
+		"POST",
+		`{
+			"mt": 109,
+			"axis": "189",
+			"horizon": "1340",
+			"x": 25969.153,
+			"y": 35462.677
+		}`,
+		http.StatusOK,
+		`{"id":\d+,"mt":109,"axis":"189","horizon":"1340","x":25969.153,"y":35462.677}`,
+		"wrong single task response",
+	},
+	{
+		"Get result real coordinates MT 111-109",
+		func(req *http.Request, migrator *migrate.Migrate) {},
+		"/v1/coordinates/13/12",
+		`GET`,
+		``,
+		http.StatusOK,
+		`"Результат обчислення зворотньої геодезичної задачі: 29° 17′ 1″ "`,
+		"wrong invert result response",
+	},
 }
 
 func coordinateMocker(n int) []domain.Coordinate {
