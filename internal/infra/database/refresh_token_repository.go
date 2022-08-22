@@ -16,8 +16,8 @@ type refreshToken struct {
 }
 
 type refreshTokenAndUser struct {
-	refreshToken `db:" ,inline"`
-	user         `db:" ,inline"`
+	refreshToken `db:",inline"`
+	user         `db:", inline"`
 }
 
 type RefreshTokenRepository interface {
@@ -34,7 +34,7 @@ type tokenRepository struct {
 
 func NewRefreshTokenRepository(dbSession *db.Session) RefreshTokenRepository {
 	return &tokenRepository{
-		coll:    (*dbSession).Collection("refresh_token"),
+		coll:    (*dbSession).Collection("refresh_tokens"),
 		session: dbSession,
 	}
 }

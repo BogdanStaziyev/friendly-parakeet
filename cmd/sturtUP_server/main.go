@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/upper/db/v4"
 	"github.com/upper/db/v4/adapter/postgresql"
 	"log"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"startUp/config"
 	"startUp/internal/app"
 	"startUp/internal/infra/database"
+	"startUp/internal/infra/http/middlewares"
 	"syscall"
 
 	"startUp/internal/infra/http"
@@ -58,17 +60,41 @@ func main() {
 	if err != nil {
 		log.Fatalf("Unable to create new DB session: %q\n", err)
 	}
-	defer ses.Close()
+	defer func(ses db.Session) {
+		err = ses.Close()
+		if err != nil {
+
+		}
+	}(ses)
+
+	_, err = os.Stat(conf.FileStorageLocation)
+	if err != nil {
+		err = os.Mkdir(conf.FileStorageLocation, os.ModePerm)
+	}
+	if err != nil {
+		log.Fatalf("Storage folder is not available %s", err)
+	}
 
 	//Coordinate
 	coordinateRepository := database.NewRepository(&ses)
 	coordinateService := app.NewService(&coordinateRepository)
 	coordinateController := controllers.NewEventController(&coordinateService)
 
+	//user
+	userRepository := database.NewUserRepository(&ses)
+	refreshTokenRepository := database.NewRefreshTokenRepository(&ses)
+	userService := app.NewUserService(&userRepository)
+	refreshTokenService := app.NewRefreshTokenService(&refreshTokenRepository, []byte(conf.AuthAccessKeySecret))
+	userController := controllers.NewUserController(&userService, &refreshTokenService)
+
+	authMiddleware := middlewares.AuthMiddleware(refreshTokenService)
+
 	//HTTP Server
 	err = http.Server(
 		ctx,
 		http.Router(
+			userController,
+			authMiddleware,
 			coordinateController,
 		),
 	)

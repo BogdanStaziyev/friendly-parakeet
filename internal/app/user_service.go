@@ -28,7 +28,7 @@ func NewUserService(u *database.UserRepository) UserService {
 
 func (u *userService) Save(user *domain.User) (*domain.User, error) {
 	// get hash password
-	phash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 31121991)
+	phash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 2)
 	if err != nil {
 		return nil, fmt.Errorf("userService SaveUser: %w", err)
 	}

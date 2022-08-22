@@ -9,7 +9,7 @@ type UserDto struct {
 	Id          int64     `json:"id"`
 	Name        string    `json:"name"`
 	Email       string    `json:"email"`
-	Role        uint8     `json:"role"`
+	Role        uint8     `json:"role_id"`
 	CreatedDate time.Time `json:"created_date"`
 	UpdatedDate time.Time `json:"updated_date"`
 	DeletedDate time.Time `json:"deleted_date"`

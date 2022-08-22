@@ -11,11 +11,11 @@ import (
 const UserTable = "users"
 
 type user struct {
-	Id          int64      `db:"id"`
+	Id          int64      `db:"id,omitempty"`
 	Name        string     `db:"name"`
 	Email       string     `db:"email"`
 	Passhash    []byte     `db:"passhash,omitempty"`
-	Role        uint8      `db:"role"`
+	Role        uint8      `db:"role_id"`
 	CreatedDate time.Time  `db:"created_date,omitempty"`
 	UpdatedDate time.Time  `db:"updated_date,omitempty"`
 	DeletedDate *time.Time `db:"deleted_date"`

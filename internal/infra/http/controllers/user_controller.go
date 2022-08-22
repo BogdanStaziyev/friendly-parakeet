@@ -143,7 +143,7 @@ func (c *UserController) Delete() http.HandlerFunc {
 func (c *UserController) LogIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		//validate input
-		user, err := c.userValidator.ValidateAndMap(r)
+		user, err := c.userLoginValidator.ValidatorAndMap(r)
 		if err != nil {
 			log.Print(err)
 			badRequest(w, err)

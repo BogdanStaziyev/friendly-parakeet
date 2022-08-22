@@ -8,7 +8,7 @@ type UserRequest struct {
 	Name     string `json:"name" validate:"required,gte=3"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,gte=8"`
-	Role     uint8  `json:"role" validate:"required,numeric"`
+	Role     uint8  `json:"role_id" validate:"required,numeric"`
 }
 
 func mapUserRequestToDomain(request *UserRequest) *domain.User {
@@ -35,7 +35,7 @@ func mapUserLoginRequestToDomain(request *userLoginRequest) *domain.User {
 type userUpdateRequest struct {
 	Name  string `json:"name" validate:"required,gte=3"`
 	Email string `json:"email" validate:"required,email"`
-	Role  uint8  `json:"role" validate:"required,numeric"`
+	Role  uint8  `json:"role_id" validate:"required,numeric"`
 }
 
 func mapUserUpdateRequestDomain(request *userUpdateRequest) *domain.User {
