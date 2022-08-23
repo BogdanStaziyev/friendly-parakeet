@@ -15,6 +15,7 @@ var coordinateControllerTest = []*requestTest{
 			resetDB(migrator)
 			entitiesToDB := 10
 			coordinateMocker(entitiesToDB)
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
 		},
 		"/api/v1/coordinates",
 		"GET",
@@ -25,7 +26,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Get single object ID=5 ",
-		func(req *http.Request, migrator *migrate.Migrate) {},
+		func(r *http.Request, migrator *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/5",
 		"GET",
 		``,
@@ -35,7 +39,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Create object ",
-		func(req *http.Request, migrator *migrate.Migrate) {},
+		func(r *http.Request, migrator *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/add",
 		"POST",
 		`{
@@ -51,7 +58,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Update object ID=7 ",
-		func(req *http.Request, migrator *migrate.Migrate) {},
+		func(r *http.Request, migrator *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/update",
 		"PUT",
 		`{
@@ -68,7 +78,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Delete object by ID=2",
-		func(r *http.Request, migrate *migrate.Migrate) {},
+		func(r *http.Request, migrate *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/2",
 		"DELETE",
 		``,
@@ -78,7 +91,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Get single object by Deleted ID=2",
-		func(req *http.Request, migrator *migrate.Migrate) {},
+		func(r *http.Request, migrator *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/2",
 		`GET`,
 		``,
@@ -88,7 +104,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Create object 111",
-		func(req *http.Request, migrator *migrate.Migrate) {},
+		func(r *http.Request, migrator *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/add",
 		"POST",
 		`{
@@ -104,7 +123,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Create object 109",
-		func(req *http.Request, migrator *migrate.Migrate) {},
+		func(r *http.Request, migrator *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/add",
 		"POST",
 		`{
@@ -120,7 +142,10 @@ var coordinateControllerTest = []*requestTest{
 	},
 	{
 		"Get result real coordinates MT 111-109",
-		func(req *http.Request, migrator *migrate.Migrate) {},
+		func(r *http.Request, migrator *migrate.Migrate) {
+			HeaderTokenMock(r, 2, 1, domain.ROLE_USER)
+
+		},
 		"/api/v1/coordinates/13/12",
 		`GET`,
 		``,
