@@ -39,38 +39,6 @@ func NewRefreshTokenService(u *database.RefreshTokensRepository, secretAccess []
 	}
 }
 
-func (s *sessionService) CreateAccessToken(storedToken *domain.RefreshToken) (string, error) {
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, userAccessClaimes{
-		UserId:   storedToken.UserId,
-		UserRole: storedToken.UserRole,
-		TokenId:  storedToken.Id,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: getNewAccessExpireUnixTime(),
-		},
-	})
-
-	return jwtToken.SignedString(s.secretAccess)
-}
-
-func (s *sessionService) VerifyAccessToken(tokenString string) (*domain.RefreshToken, error) {
-
-	claims, err := parseJWT(tokenString, &userAccessClaimes{}, s.secretAccess)
-	if err != nil {
-		return nil, fmt.Errorf("sessionService VerifyAccessToken: %w", err)
-	}
-
-	accessClaims := claims.(*userAccessClaimes)
-	return &domain.RefreshToken{
-		Id:       accessClaims.TokenId,
-		UserId:   accessClaims.UserId,
-		UserRole: accessClaims.UserRole,
-	}, nil
-}
-
-func (s *sessionService) DeleteSessionToken(userId, tokenId int64) error {
-	return (*s.sessionRepo).Delete(userId, tokenId)
-}
-
 func (s *sessionService) CreateRefreshToken(user *domain.User) (*domain.RefreshToken, error) {
 	newToken := domain.RefreshToken{
 		UserId:     user.Id,
@@ -85,6 +53,53 @@ func (s *sessionService) CreateRefreshToken(user *domain.User) (*domain.RefreshT
 	}
 	storedToken.UserRole = role
 	return storedToken, nil
+}
+
+func (s *sessionService) VerifyAccessToken(tokenString string) (*domain.RefreshToken, error) {
+
+	claims, err := parseJWT(tokenString, &userAccessClaimes{}, s.secretAccess)
+	if err != nil {
+		return nil, fmt.Errorf("sessionService VerifyAccessToken: %w", err)
+	}
+
+	accessClaims := claims.(*userAccessClaimes)
+	return &domain.RefreshToken{
+		UserId:   accessClaims.UserId,
+		Id:       accessClaims.TokenId,
+		UserRole: accessClaims.UserRole,
+	}, nil
+}
+
+func (s *sessionService) CreateAccessToken(storedToken *domain.RefreshToken) (string, error) {
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, userAccessClaimes{
+		UserId:   storedToken.UserId,
+		TokenId:  storedToken.Id,
+		UserRole: storedToken.UserRole,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: getNewAccessExpireUnixTime(),
+		},
+	})
+
+	return jwtToken.SignedString(s.secretAccess)
+}
+
+func (s *sessionService) DeleteSessionToken(userId, tokenId int64) error {
+	return (*s.sessionRepo).Delete(userId, tokenId)
+}
+
+func parseJWT(tokenString string, claims jwt.Claims, secret []byte) (jwt.Claims, error) {
+
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return secret, nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("sessionService parseJWT: parse error: %w", err)
+	}
+	if err := token.Claims.Valid(); err != nil {
+		return nil, fmt.Errorf("sessionService parseJWT: validation error: %w", err)
+	}
+
+	return claims, nil
 }
 
 func getNewRefreshToken() string {
@@ -102,19 +117,4 @@ func getNewRefreshExpireDate() time.Time {
 
 func getNewAccessExpireUnixTime() int64 {
 	return time.Now().Add(time.Hour * 4).Unix() //expire after the 10 minutes
-}
-
-func parseJWT(tokenString string, claims jwt.Claims, secret []byte) (jwt.Claims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-		return secret, nil
-	})
-
-	if err != nil {
-		return nil, fmt.Errorf("sessionService parseJWT: parse error: %w", err)
-	}
-	if err := token.Claims.Valid(); err != nil {
-		return nil, fmt.Errorf("sessionService parseJWT: validation error: %w", err)
-	}
-
-	return claims, nil
 }

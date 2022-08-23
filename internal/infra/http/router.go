@@ -97,7 +97,7 @@ func UserRouter(router *chi.Router, userController *controllers.UserController) 
 			"/logout",
 			userController.LogOut(),
 		)
-		apiRouterAdminOnly := apiRouter.With(middlewares.AdminOnli)
+		apiRouterAdminOnly := apiRouter.With(middlewares.AdminOnly)
 		apiRouterAdminOnly.Post(
 			"/",
 			userController.Save(),

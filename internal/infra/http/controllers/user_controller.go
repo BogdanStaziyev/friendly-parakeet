@@ -1,13 +1,15 @@
 package controllers
 
 import (
-	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
+	"strconv"
+
 	"startUp/internal/app"
 	"startUp/internal/infra/http/resources"
 	"startUp/internal/infra/http/validators"
-	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 const BEARER_SCHEMA = "Bearer "
@@ -16,7 +18,7 @@ type UserController struct {
 	userService         *app.UserService
 	refreshTokenService *app.RefreshTokenService
 	userValidator       *validators.UserValidator
-	userLoginValidator  *validators.UserLoginValidator
+	userLogInValidator  *validators.UserLoginValidator
 	userUpdateValidator *validators.UserUpdateValidator
 }
 
@@ -25,7 +27,7 @@ func NewUserController(u *app.UserService, rt *app.RefreshTokenService) *UserCon
 		userService:         u,
 		refreshTokenService: rt,
 		userValidator:       validators.NewUserValidator(),
-		userLoginValidator:  validators.NewUserLoginValidator(),
+		userLogInValidator:  validators.NewUserLoginValidator(),
 		userUpdateValidator: validators.NewUserUpdateValidator(),
 	}
 }
@@ -39,24 +41,26 @@ func (c *UserController) Save() http.HandlerFunc {
 			return
 		}
 
-		sevedUser, err := (*c.userService).Save(user)
+		savedUser, err := (*c.userService).Save(user)
 		if err != nil {
 			log.Print(err)
-			badRequest(w, err)
+			internalServerError(w, err)
 			return
 		}
-		success(w, resources.MapDomainToUserDto(sevedUser))
+		success(w, resources.MapDomainToUserDto(savedUser))
+
 	}
 }
 
 func (c *UserController) FindOne() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		autHeader := r.Header.Get("Authorization")
-		token := autHeader[len(BEARER_SCHEMA):]
+
+		authHeader := r.Header.Get("Authorization")
+		token := authHeader[len(BEARER_SCHEMA):]
 
 		params, err := parseUrlQuery(r)
 		if err != nil {
-			log.Print(err)
+			log.Println(err)
 			badRequest(w, err)
 			return
 		}
@@ -65,6 +69,7 @@ func (c *UserController) FindOne() http.HandlerFunc {
 			log.Print(err)
 			return
 		}
+
 		usr, err := (*c.userService).FindOne(user.UserId, params)
 		if err != nil {
 			log.Print(err)
@@ -79,7 +84,7 @@ func (c *UserController) PaginateAll() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		params, err := parseUrlQuery(r)
 		if err != nil {
-			log.Print(err)
+			log.Println(err)
 			badRequest(w, err)
 			return
 		}
@@ -91,6 +96,7 @@ func (c *UserController) PaginateAll() http.HandlerFunc {
 			return
 		}
 		success(w, resources.MapDomainToUserDtoCollection(users))
+
 	}
 }
 
@@ -111,13 +117,13 @@ func (c *UserController) Update() http.HandlerFunc {
 		}
 
 		user.Id = id
-		updateUser, err := (*c.userService).Update(user)
+		updatedUser, err := (*c.userService).Update(user)
 		if err != nil {
 			log.Print(err)
 			internalServerError(w, err)
 			return
 		}
-		success(w, resources.MapDomainToUserDto(updateUser))
+		success(w, resources.MapDomainToUserDto(updatedUser))
 	}
 }
 
@@ -136,6 +142,7 @@ func (c *UserController) Delete() http.HandlerFunc {
 			internalServerError(w, err)
 			return
 		}
+
 		ok(w)
 	}
 }
@@ -143,13 +150,13 @@ func (c *UserController) Delete() http.HandlerFunc {
 func (c *UserController) LogIn() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		//validate input
-		user, err := c.userLoginValidator.ValidatorAndMap(r)
+		user, err := c.userLogInValidator.ValidatorAndMap(r)
 		if err != nil {
 			log.Print(err)
 			badRequest(w, err)
 			return
 		}
-		//login user
+		// login the user
 		userStored, err := (*c.userService).LogIn(user)
 		if err != nil {
 			log.Print(err)
@@ -164,7 +171,7 @@ func (c *UserController) LogIn() http.HandlerFunc {
 			return
 		}
 
-		//set access token into the header
+		// set access token into the header
 		accessToken, err := (*c.refreshTokenService).CreateAccessToken(storedToken)
 		if err != nil {
 			log.Print(err)
@@ -173,24 +180,27 @@ func (c *UserController) LogIn() http.HandlerFunc {
 		}
 
 		w.Header().Set("Authorization", accessToken)
-		//generate success response
+
+		// set refresh token into the cookie
+
+		// generate success responce
 		success(w, resources.MapDomainTokenDto(accessToken))
+
 	}
 }
 
 func (c *UserController) LogOut() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		//get refresh token
-		autHeader := r.Header.Get("Authorization")
-		token := autHeader[len(BEARER_SCHEMA):]
+		// get refresh token
+		authHeader := r.Header.Get("Authorization")
+		token := authHeader[len(BEARER_SCHEMA):]
 
 		user, err := (*c.refreshTokenService).VerifyAccessToken(token)
 		if err != nil {
 			log.Print(err)
 			return
 		}
-
-		//delete refresh token
+		// delete refresh token
 		err = (*c.refreshTokenService).DeleteSessionToken(user.UserId, user.Id)
 		if err != nil {
 			log.Print(err)

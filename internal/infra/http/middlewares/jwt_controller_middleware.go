@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"startUp/internal/app"
 	"startUp/internal/domain"
 )
@@ -17,7 +18,7 @@ const BEARER_SCHEMA = "Bearer "
 func AuthMiddleware(s app.RefreshTokenService) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			//verify access token
+			// verify access token
 			if user, err := authorizeWithAccessToken(r, s); err == nil {
 				// add user object to the request context
 				r = r.WithContext(context.WithValue(r.Context(), contextUserIdKey, user))
@@ -32,11 +33,14 @@ func AuthMiddleware(s app.RefreshTokenService) func(http.Handler) http.Handler {
 	}
 }
 
-func AdminOnli(next http.Handler) http.Handler {
+func AdminOnly(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := GetAuthorizedUser(r)
 		if user == nil {
 			log.Println("Warning! User authorization check is turned off!")
+			next.ServeHTTP(w, r)
+			return
+		} else if user.UserRole == domain.ROLE_ADMIN {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -46,22 +50,22 @@ func AdminOnli(next http.Handler) http.Handler {
 }
 
 func authorizeWithAccessToken(r *http.Request, s app.RefreshTokenService) (*domain.RefreshToken, error) {
-	//get jwt access token
+	// get jwt access token
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
-		return nil, fmt.Errorf("failed to get token from Autorization header")
+		return nil, fmt.Errorf("failed to get token from Authorization header")
 	}
 	token := authHeader[len(BEARER_SCHEMA):]
 
-	//verify jwt token
+	// verify jwt token
 	user, err := s.VerifyAccessToken(token)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get token from Autorization header")
+		return nil, fmt.Errorf("failed to get token from Authorization header")
 	}
 	return user, nil
 }
 
-//return authorized user object or nil if user is not authorized
+// GetAuthorizedUser return authorized user object or nil if user is not authorized
 func GetAuthorizedUser(r *http.Request) *domain.RefreshToken {
 	object := r.Context().Value(contextUserIdKey)
 	if user, ok := object.(*domain.RefreshToken); ok {

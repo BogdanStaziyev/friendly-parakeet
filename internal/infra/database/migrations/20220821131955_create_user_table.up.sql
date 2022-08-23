@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS public.users
     passhash character (60) NOT NULL,
     role_id smallint NOT NULL,
     created_date timestamp NOT NULL DEFAULT NOW()::timestamp,
+    updated_date timestamp,
     deleted_date timestamp DEFAULT NULL
     );
