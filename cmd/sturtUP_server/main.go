@@ -93,8 +93,8 @@ func main() {
 	err = http.Server(
 		ctx,
 		http.Router(
-			userController,
 			authMiddleware,
+			userController,
 			coordinateController,
 		),
 	)
