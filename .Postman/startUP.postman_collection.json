@@ -1,0 +1,431 @@
+{
+	"info": {
+		"_postman_id": "2b369050-5275-44f6-a48b-b420842f005d",
+		"name": "startUP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20982235"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"name\":\"name\",\r\n    \"email\":\"Email12223@email.com\",\r\n    \"password\":\"password\",\r\n    \"role_id\": 1\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user"
+							]
+						},
+						"description": "StartFragment\n\nCreate request structure:\n\n``` json\n{\n    \"name\":\"name\",\n    \"email\":\"Email@email.com\",\n    \"password\":\"password\",\n    \"role_id\": 1\n}\n```\n\nEndFragmentStartFragment\n\nReturn structure:\n\n``` json\n{\n    \"id\": 1,\n    \"name\": \"name\",\n    \"email\": \"Email@email.com\",\n    \"role_id\": 1,\n    \"created_date\": \"2022-06-02T09:27:47.593242Z\"\n}\n```\n\nEndFragment"
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"name\",\r\n    \"email\":\"Email@email.com\",\r\n    \"role_id\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6"
+								}
+							]
+						},
+						"description": "StartFragmentStartFragment\n\nUpdate request structure:\n\n``` json\n{\n    \"name\":\"name\",\n    \"email\":\"Email@email.com\",\n    \"role_id\": 1\n}\n```\n\nEndFragmentStartFragment\n\nReturn structure:\n\n``` json\n{\n    \"id\": 1,\n    \"name\": \"name\",\n    \"email\": \"Email@email.com\",\n    \"role_id\": 1,\n    \"created_date\": \"2022-06-02T09:27:47.593242Z\"\n}\n```\n\nEndFragment"
+					},
+					"response": []
+				},
+				{
+					"name": "Pageinate users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/:id",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "12"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LogIn user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"user\",\r\n    \"email\":\"mail@mail.com\",\r\n    \"password\":\"password\",\r\n    \"role_id\":1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/user/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"login"
+							]
+						},
+						"description": "StartFragment\n\nLogin request structure:\n\n``` json\n{\n    \"email\":\"Email@email.com\",\n    \"password\":\"pwd\"\n}\n```\n\nEndFragmentStartFragment\n\nStartFragment\n\nReturn structure:\n\nEndFragment\n\n``` json\n{\n    \"id\": 1,\n    \"name\": \"name\",\n    \"email\": \"Email@email.com\",\n    \"role_id\": 1,\n    \"created_date\": \"2022-06-02T09:27:47.593242Z\"\n}\n```\n\nEndFragment"
+					},
+					"response": []
+				},
+				{
+					"name": "LogOut user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/logout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check user authorization",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/user/checkauth",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"checkauth"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "coordinates",
+			"item": [
+				{
+					"name": "Coordinates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/coordinates",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"coordinates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Coordinate (by ID)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/coordinates/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"coordinates",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create coordinate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"mt\": 21,\r\n \"axis\": \"165\",\r\n \"horizon\": 1350,\r\n \"x\": 23323.213,\r\n \"y\": 23213.231\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/coordinates/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"coordinates",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update coordinate",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 4,\r\n    \"MT\": 24,\r\n    \"Axis\": \"reww\",\r\n    \"Horizon\": \"re\",\r\n    \"X\": 21312,\r\n    \"Y\": 1232133\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/coordinates/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"coordinates",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete coordinate",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/coordinates/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"coordinates",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invert coorinete task",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/v1/coordinates/4/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"coordinates",
+								"4",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/ping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3JvbGUiOjEsInRva2VuX2lkIjo3LCJleHAiOjE2NjEyNTMyMjh9.u663RSyAM0kOx9gbQgsvKByJoxoz4Um1eeIBm0T4L0s",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "localhost:8080/api/v1",
+			"type": "string"
+		}
+	]
+}
