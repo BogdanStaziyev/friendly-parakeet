@@ -7,7 +7,7 @@ import (
 	"startUp/internal/infra/database"
 )
 
-type Service interface {
+type CoordinateService interface {
 	AddCoordinate(coordinate *domain.Coordinate) (*domain.Coordinate, error)
 	UpdateCoordinate(coordinate *domain.Coordinate) error
 	DeleteCoordinate(id int64) error
@@ -17,10 +17,10 @@ type Service interface {
 }
 
 type service struct {
-	repo *database.Repository
+	repo *database.CoordinateRepository
 }
 
-func NewService(r *database.Repository) Service {
+func NewCoordinateService(r *database.CoordinateRepository) CoordinateService {
 	return &service{
 		repo: r,
 	}

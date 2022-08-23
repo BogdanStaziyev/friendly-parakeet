@@ -27,7 +27,7 @@ import (
 var (
 	refreshTokenService app.RefreshTokenService
 	userService         app.UserService
-	coordinateService   app.Service
+	coordinateService   app.CoordinateService
 )
 
 type requestTest struct {
@@ -93,8 +93,8 @@ func TestController(t *testing.T) {
 	userController := controllers.NewUserController(&userService, &refreshTokenService)
 
 	coordinateRepository := database.NewRepository(&sess)
-	coordinateService = app.NewService(&coordinateRepository)
-	coordinateController := controllers.NewEventController(&coordinateService)
+	coordinateService = app.NewCoordinateService(&coordinateRepository)
+	coordinateController := controllers.NewCoordinateController(&coordinateService, &refreshTokenService)
 
 	router := userHttp.Router(
 		authMiddleware,

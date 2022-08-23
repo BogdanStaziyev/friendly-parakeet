@@ -75,17 +75,17 @@ func main() {
 		log.Fatalf("Storage folder is not available %s", err)
 	}
 
-	//Coordinate
-	coordinateRepository := database.NewRepository(&ses)
-	coordinateService := app.NewService(&coordinateRepository)
-	coordinateController := controllers.NewEventController(&coordinateService)
-
 	//user
 	userRepository := database.NewUserRepository(&ses)
 	refreshTokenRepository := database.NewRefreshTokenRepository(&ses)
 	userService := app.NewUserService(&userRepository)
 	refreshTokenService := app.NewRefreshTokenService(&refreshTokenRepository, []byte(conf.AuthAccessKeySecret))
 	userController := controllers.NewUserController(&userService, &refreshTokenService)
+
+	//Coordinate
+	coordinateRepository := database.NewRepository(&ses)
+	coordinateService := app.NewCoordinateService(&coordinateRepository)
+	coordinateController := controllers.NewCoordinateController(&coordinateService, &refreshTokenService)
 
 	authMiddleware := middlewares.AuthMiddleware(refreshTokenService)
 

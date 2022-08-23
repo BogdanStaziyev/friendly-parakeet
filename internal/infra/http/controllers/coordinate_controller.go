@@ -13,19 +13,26 @@ import (
 )
 
 type CoordinateController struct {
-	service   *app.Service
-	validator *validators.CoordinateValidator
+	service             *app.CoordinateService
+	validator           *validators.CoordinateValidator
+	refreshTokenService *app.RefreshTokenService
 }
 
-func NewEventController(s *app.Service) *CoordinateController {
+func NewCoordinateController(s *app.CoordinateService, rt *app.RefreshTokenService) *CoordinateController {
 	return &CoordinateController{
-		service:   s,
-		validator: validators.NewCoordinateValidator(),
+		service:             s,
+		validator:           validators.NewCoordinateValidator(),
+		refreshTokenService: rt,
 	}
 }
 
 func (c *CoordinateController) AddCoordinate() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		authHeader := request.Header.Get("Authorization")
+		token := authHeader[len(BEARER_SCHEMA):]
+
+		user, err := (*c.refreshTokenService).VerifyAccessToken(token)
+
 		coordinates, err := c.validator.ValidateAndMap(request)
 		if err != nil {
 			log.Print(writer, err)
@@ -33,6 +40,7 @@ func (c *CoordinateController) AddCoordinate() http.HandlerFunc {
 			return
 		}
 
+		coordinates.UserID = user.UserId
 		createCoordinate, err := (*c.service).AddCoordinate(coordinates)
 		if err != nil {
 			log.Println(err)
@@ -45,6 +53,11 @@ func (c *CoordinateController) AddCoordinate() http.HandlerFunc {
 
 func (c *CoordinateController) UpdateCoordinate() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
+		authHeader := request.Header.Get("Authorization")
+		token := authHeader[len(BEARER_SCHEMA):]
+
+		user, err := (*c.refreshTokenService).VerifyAccessToken(token)
+
 		coordinates, err := c.validator.ValidateAndMap(request)
 		if err != nil {
 			log.Println(err)
@@ -52,6 +65,7 @@ func (c *CoordinateController) UpdateCoordinate() http.HandlerFunc {
 			return
 		}
 
+		coordinates.UserID = user.UserId
 		err = (*c.service).UpdateCoordinate(coordinates)
 		if err != nil {
 			log.Println(err)

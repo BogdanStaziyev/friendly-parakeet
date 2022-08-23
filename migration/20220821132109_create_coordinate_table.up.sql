@@ -7,7 +7,11 @@ CREATE TABLE IF NOT EXISTS public.coordinate
     axis    varchar          not null,
     horizon varchar          not null,
     x       double precision not null,
-    y       double precision not null
+    y       double precision not null,
+    user_id         integer  not null,
+    created_date    timestamp NOT NULL,
+    updated_date    timestamp NOT NULL,
+    deleted_date    timestamp NULL
 );
 
 alter table coordinate

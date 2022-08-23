@@ -5,20 +5,25 @@ import (
 	"github.com/upper/db/v4"
 	"log"
 	"startUp/internal/domain"
+	"time"
 )
 
 const CoordinateTable = "coordinate"
 
 type coordinate struct {
-	Id      int64   `db:"id,omitempty"`
-	MT      int64   `db:"mt"`
-	Axis    string  `db:"axis"`
-	Horizon string  `db:"horizon"`
-	X       float64 `db:"x"`
-	Y       float64 `db:"y"`
+	Id          int64      `db:"id,omitempty"`
+	MT          int64      `db:"mt"`
+	Axis        string     `db:"axis"`
+	Horizon     string     `db:"horizon"`
+	X           float64    `db:"x"`
+	Y           float64    `db:"y"`
+	UserId      int64      `db:"user_id"`
+	CreatedDate time.Time  `db:"created_date,omitempty"`
+	UpdatedDate time.Time  `db:"updated_date, omitempty"`
+	DeletedDate *time.Time `db:"deleted_date"`
 }
 
-type Repository interface {
+type CoordinateRepository interface {
 	AddCoordinate(coordinate *domain.Coordinate) (*domain.Coordinate, error)
 	UpdateCoordinate(coordinate *domain.Coordinate) error
 	DeleteCoordinate(id int64) error
@@ -31,7 +36,7 @@ type repository struct {
 	coll db.Collection
 }
 
-func NewRepository(dbSession *db.Session) Repository {
+func NewRepository(dbSession *db.Session) CoordinateRepository {
 	return &repository{
 		coll: (*dbSession).Collection("coordinate"),
 	}
@@ -39,7 +44,7 @@ func NewRepository(dbSession *db.Session) Repository {
 
 func (r *repository) AddCoordinate(coordinate *domain.Coordinate) (*domain.Coordinate, error) {
 	coordinates := mapCoordinateDbModel(coordinate)
-
+	coordinates.CreatedDate = time.Now()
 	err := r.coll.InsertReturning(coordinates)
 	if err != nil {
 		return nil, fmt.Errorf("CoordinaterepositoryCreate: %w", err)
@@ -51,6 +56,7 @@ func (r *repository) AddCoordinate(coordinate *domain.Coordinate) (*domain.Coord
 func (r *repository) UpdateCoordinate(coordinate *domain.Coordinate) error {
 	coordinates := mapCoordinateDbModel(coordinate)
 
+	coordinates.UpdatedDate = time.Now()
 	err := r.coll.Find(coordinates.Id).Update(coordinates)
 	if err != nil {
 		log.Print(err)
@@ -104,12 +110,16 @@ func (r *repository) InverseTask(firstId, secondId int64) (string, error, *domai
 
 func mapCoordinateDbModelToDomain(coordinate *coordinate) *domain.Coordinate {
 	return &domain.Coordinate{
-		Id:      coordinate.Id,
-		MT:      coordinate.MT,
-		Axis:    coordinate.Axis,
-		Horizon: coordinate.Horizon,
-		X:       coordinate.X,
-		Y:       coordinate.Y,
+		Id:          coordinate.Id,
+		MT:          coordinate.MT,
+		Axis:        coordinate.Axis,
+		Horizon:     coordinate.Horizon,
+		X:           coordinate.X,
+		Y:           coordinate.Y,
+		UserID:      coordinate.UserId,
+		CreatedDate: coordinate.CreatedDate,
+		UpdatedDate: coordinate.UpdatedDate,
+		DeletedDate: getTimeFromTimePtr(coordinate.DeletedDate),
 	}
 }
 
@@ -124,11 +134,15 @@ func mapCoordinateDbModelToDomainCollection(coordinate []coordinate) []domain.Co
 
 func mapCoordinateDbModel(coord *domain.Coordinate) *coordinate {
 	return &coordinate{
-		Id:      coord.Id,
-		MT:      coord.MT,
-		Axis:    coord.Axis,
-		Horizon: coord.Horizon,
-		X:       coord.X,
-		Y:       coord.Y,
+		Id:          coord.Id,
+		MT:          coord.MT,
+		Axis:        coord.Axis,
+		Horizon:     coord.Horizon,
+		X:           coord.X,
+		Y:           coord.Y,
+		UserId:      coord.UserID,
+		CreatedDate: coord.CreatedDate,
+		UpdatedDate: coord.UpdatedDate,
+		DeletedDate: getTimePtrFromTime(coord.DeletedDate),
 	}
 }
