@@ -3,9 +3,10 @@ package app
 import (
 	"crypto/rand"
 	"fmt"
+	"time"
+
 	"startUp/internal/domain"
 	"startUp/internal/infra/database"
-	"time"
 
 	"github.com/golang-jwt/jwt"
 )
@@ -18,18 +19,20 @@ type RefreshTokenService interface {
 }
 
 type sessionService struct {
-	sessionRepo  *database.RefreshTokenRepository
+	sessionRepo *database.RefreshTokensRepository
+	//todo uncommenting if need
+	//secretRefresh []byte
 	secretAccess []byte
 }
 
-type userAccessClaims struct {
+type userAccessClaimes struct {
 	UserId   int64       `json:"user_id"`
 	UserRole domain.Role `json:"user_role"`
 	TokenId  int64       `json:"token_id"`
 	jwt.StandardClaims
 }
 
-func NewRefreshTokenService(u *database.RefreshTokenRepository, secretAccess []byte) RefreshTokenService {
+func NewRefreshTokenService(u *database.RefreshTokensRepository, secretAccess []byte) RefreshTokenService {
 	return &sessionService{
 		sessionRepo:  u,
 		secretAccess: secretAccess,
@@ -37,7 +40,7 @@ func NewRefreshTokenService(u *database.RefreshTokenRepository, secretAccess []b
 }
 
 func (s *sessionService) CreateAccessToken(storedToken *domain.RefreshToken) (string, error) {
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodES256, userAccessClaims{
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, userAccessClaimes{
 		UserId:   storedToken.UserId,
 		UserRole: storedToken.UserRole,
 		TokenId:  storedToken.Id,
@@ -51,12 +54,12 @@ func (s *sessionService) CreateAccessToken(storedToken *domain.RefreshToken) (st
 
 func (s *sessionService) VerifyAccessToken(tokenString string) (*domain.RefreshToken, error) {
 
-	claims, err := parseJwt(tokenString, &userAccessClaims{}, s.secretAccess)
+	claims, err := parseJWT(tokenString, &userAccessClaimes{}, s.secretAccess)
 	if err != nil {
 		return nil, fmt.Errorf("sessionService VerifyAccessToken: %w", err)
 	}
 
-	accessClaims := claims.(*userAccessClaims)
+	accessClaims := claims.(*userAccessClaimes)
 	return &domain.RefreshToken{
 		Id:       accessClaims.TokenId,
 		UserId:   accessClaims.UserId,
@@ -94,23 +97,23 @@ func getNewRefreshToken() string {
 }
 
 func getNewRefreshExpireDate() time.Time {
-	return time.Now().AddDate(0, 0, 5) // expire after 5 days
+	return time.Now().AddDate(0, 0, 5) //expire after the 5 days
 }
 
 func getNewAccessExpireUnixTime() int64 {
-	return time.Now().Add(time.Hour * 4).Unix() //expire after 4 hour
+	return time.Now().Add(time.Hour * 4).Unix() //expire after the 10 minutes
 }
 
-func parseJwt(tokenString string, claims jwt.Claims, secret []byte) (jwt.Claims, error) {
+func parseJWT(tokenString string, claims jwt.Claims, secret []byte) (jwt.Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("SessionService parseJWT: parse error: %w", err)
+		return nil, fmt.Errorf("sessionService parseJWT: parse error: %w", err)
 	}
 	if err := token.Claims.Valid(); err != nil {
-		return nil, fmt.Errorf("SessionService parseJWT: validation error: %w", err)
+		return nil, fmt.Errorf("sessionService parseJWT: validation error: %w", err)
 	}
 
 	return claims, nil

@@ -16,7 +16,7 @@ var coordinateControllerTest = []*requestTest{
 			entitiesToDB := 10
 			coordinateMocker(entitiesToDB)
 		},
-		"/v1/coordinates",
+		"/api/v1/coordinates",
 		"GET",
 		``,
 		http.StatusOK,
@@ -26,7 +26,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Get single object ID=5 ",
 		func(req *http.Request, migrator *migrate.Migrate) {},
-		"/v1/coordinates/5",
+		"/api/v1/coordinates/5",
 		"GET",
 		``,
 		http.StatusOK,
@@ -36,7 +36,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Create object ",
 		func(req *http.Request, migrator *migrate.Migrate) {},
-		"/v1/coordinates/add",
+		"/api/v1/coordinates/add",
 		"POST",
 		`{
 			"mt": 34,
@@ -52,7 +52,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Update object ID=7 ",
 		func(req *http.Request, migrator *migrate.Migrate) {},
-		"/v1/coordinates/update",
+		"/api/v1/coordinates/update",
 		"PUT",
 		`{
 			"id": 7,
@@ -69,7 +69,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Delete object by ID=2",
 		func(r *http.Request, migrate *migrate.Migrate) {},
-		"/v1/coordinates/2",
+		"/api/v1/coordinates/2",
 		"DELETE",
 		``,
 		http.StatusOK,
@@ -79,7 +79,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Get single object by Deleted ID=2",
 		func(req *http.Request, migrator *migrate.Migrate) {},
-		"/v1/coordinates/2",
+		"/api/v1/coordinates/2",
 		`GET`,
 		``,
 		http.StatusNotFound,
@@ -89,7 +89,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Create object 111",
 		func(req *http.Request, migrator *migrate.Migrate) {},
-		"/v1/coordinates/add",
+		"/api/v1/coordinates/add",
 		"POST",
 		`{
 			"mt": 111,
@@ -105,7 +105,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Create object 109",
 		func(req *http.Request, migrator *migrate.Migrate) {},
-		"/v1/coordinates/add",
+		"/api/v1/coordinates/add",
 		"POST",
 		`{
 			"mt": 109,
@@ -121,7 +121,7 @@ var coordinateControllerTest = []*requestTest{
 	{
 		"Get result real coordinates MT 111-109",
 		func(req *http.Request, migrator *migrate.Migrate) {},
-		"/v1/coordinates/13/12",
+		"/api/v1/coordinates/13/12",
 		`GET`,
 		``,
 		http.StatusOK,

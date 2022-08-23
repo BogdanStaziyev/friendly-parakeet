@@ -14,8 +14,8 @@ type HandlerFuncWrapper func(http.HandlerFunc) http.HandlerFunc
 type HandlerMiddleware func(http.Handler) http.Handler
 
 func Router(
-	userController *controllers.UserController,
 	authMiddleware HandlerMiddleware,
+	userController *controllers.UserController,
 	coordinateController *controllers.CoordinateController,
 	//TODO: uncomment to turn on commandController
 	//commandController *controllers.CommandController,

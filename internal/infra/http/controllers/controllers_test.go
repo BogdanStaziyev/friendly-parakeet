@@ -15,18 +15,24 @@ import (
 	"os"
 	"startUp/config"
 	"startUp/internal/app"
+	"startUp/internal/domain"
 	"startUp/internal/infra/database"
 	"startUp/internal/infra/http/controllers"
+	"startUp/internal/infra/http/middlewares"
 	"testing"
 
 	userHttp "startUp/internal/infra/http"
 )
 
-var coordinateService app.Service
+var (
+	refreshTokenService app.RefreshTokenService
+	userService         app.UserService
+	coordinateService   app.Service
+)
 
 type requestTest struct {
 	name           string
-	init           func(r *http.Request, migrate *migrate.Migrate)
+	init           func(*http.Request, *migrate.Migrate)
 	url            string
 	method         string
 	bodyData       string
@@ -78,11 +84,21 @@ func TestController(t *testing.T) {
 		log.Fatalf("Uneble to create Migrator: %q\n", err)
 	}
 
+	refreshTokenRepository := database.NewRefreshTokenRepository(&sess)
+	refreshTokenService = app.NewRefreshTokenService(&refreshTokenRepository, []byte(conf.AuthAccessKeySecret))
+	authMiddleware := middlewares.AuthMiddleware(refreshTokenService)
+
+	userRepository := database.NewUserRepository(&sess)
+	userService = app.NewUserService(&userRepository)
+	userController := controllers.NewUserController(&userService, &refreshTokenService)
+
 	coordinateRepository := database.NewRepository(&sess)
 	coordinateService = app.NewService(&coordinateRepository)
 	coordinateController := controllers.NewEventController(&coordinateService)
 
 	router := userHttp.Router(
+		authMiddleware,
+		userController,
 		coordinateController,
 	)
 	//Reset DB ti clean state
@@ -90,6 +106,7 @@ func TestController(t *testing.T) {
 	//Truncate from tables
 	prepareTestDB(sess)
 
+	invertOverTest(t, "userControllerTests", userControllerTests, router, migrator)
 	invertOverTest(t, "CoordinatesControllerTest", coordinateControllerTest, router, migrator)
 }
 
@@ -116,9 +133,22 @@ func invertOverTest(t *testing.T, name string, tests []*requestTest, router http
 }
 
 //func HeaderTokenMock()
+func HeaderTokenMock(req *http.Request, u, id int64, role domain.Role) {
+	accessToken, _ := refreshTokenService.CreateAccessToken(&domain.RefreshToken{
+		Id:       id,
+		UserId:   u,
+		UserRole: role,
+	})
+	bearer := "Bearer " + accessToken
+	req.Header.Set("Authorization", bearer)
+}
 
 func prepareTestDB(sess db.Session) {
-	err := sess.Collection(database.CoordinateTable).Truncate()
+	err := sess.Collection(database.UserTable).Truncate()
+	if err != nil {
+		log.Print("prepareTestDB CoordinateTable error:", err)
+	}
+	err = sess.Collection(database.CoordinateTable).Truncate()
 	if err != nil {
 		log.Print("prepareTestDB CoordinateTable error:", err)
 	}
