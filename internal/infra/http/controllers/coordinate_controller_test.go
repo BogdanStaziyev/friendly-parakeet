@@ -21,7 +21,7 @@ var coordinateControllerTest = []*requestTest{
 		"GET",
 		``,
 		http.StatusOK,
-		`\[(?:{"id":\d+,"mt":\d+,"axis":"coordinate \d+","horizon":"coordinate \d+","x":\d+(?:[\.,]\d+)+,"y":\d+(?:[\.,]\d+)?},?){10}\]`,
+		`\[(?:{"id":\d+,"mt":\d+,"axis":"coordinate \d+","horizon":"coordinate \d+","x":\d+(?:[\.,]\d+)+,"y":\d+(?:[\.,]\d+),"UserId":\d+,"CreatedDate":".{0,50}","UpdatedDate":".{0,50}","DeletedDate":".{0,50}"?},?){10}\]`,
 		"wrong list request",
 	},
 	{
@@ -34,7 +34,7 @@ var coordinateControllerTest = []*requestTest{
 		"GET",
 		``,
 		http.StatusOK,
-		`{"id":\d+,"mt":\d+,"axis":"coordinate \d+","horizon":"coordinate \d+","x":\d+(?:[\.,]\d+)+,"y":\d+(?:[\.,]\d+)}`,
+		`{"id":\d+,"mt":\d+,"axis":"coordinate \d+","horizon":"coordinate \d+","x":\d+(?:[\.,]\d+)+,"y":\d+(?:[\.,]\d+),"UserId":\d+,"CreatedDate":".{0,50}","UpdatedDate":".{0,50}","DeletedDate":".{0,50}"?}`,
 		"wrong single task response",
 	},
 	{
@@ -53,7 +53,7 @@ var coordinateControllerTest = []*requestTest{
 			"y": 222222.222
 		}`,
 		http.StatusOK,
-		`{"id":\d+,"mt":34,"axis":"created object","horizon":"created object","x":333333.333,"y":222222.222}`,
+		`{"id":\d+,"mt":34,"axis":"created object","horizon":"created object","x":333333.333,"y":222222.222,"UserId":\d+,"CreatedDate":".{0,50}","UpdatedDate":".{0,50}","DeletedDate":".{0,50}"}`,
 		"wrong single task response",
 	},
 	{
@@ -118,7 +118,7 @@ var coordinateControllerTest = []*requestTest{
 			"y": 35476.775
 		}`,
 		http.StatusOK,
-		`{"id":\d+,"mt":111,"axis":"188","horizon":"1340","x":25994.292,"y":35476.775}`,
+		`{"id":\d+,"mt":111,"axis":"188","horizon":"1340","x":25994.292,"y":35476.775,"UserId":\d+,"CreatedDate":".{0,50}","UpdatedDate":".{0,50}","DeletedDate":".{0,50}"}`,
 		"wrong single task response",
 	},
 	{
@@ -137,7 +137,7 @@ var coordinateControllerTest = []*requestTest{
 			"y": 35462.677
 		}`,
 		http.StatusOK,
-		`{"id":\d+,"mt":109,"axis":"189","horizon":"1340","x":25969.153,"y":35462.677}`,
+		`{"id":\d+,"mt":109,"axis":"189","horizon":"1340","x":25969.153,"y":35462.677,"UserId":\d+,"CreatedDate":".{0,50}","UpdatedDate":".{0,50}","DeletedDate":".{0,50}"}`,
 		"wrong single task response",
 	},
 	{
