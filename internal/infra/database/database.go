@@ -28,18 +28,19 @@ func getTimePtrFromTime(t time.Time) *time.Time {
 	}
 }
 
-// Return logical expression with soft deletion statement
-func softDelCond(cond db.LogicalExpr, showDeleted bool) db.LogicalExpr {
-	if showDeleted {
-		return cond
-	}
-	delCond := db.Cond{"deleted_date IS": nil}
-	if cond == nil {
-		return delCond
-	} else {
-		return db.And(cond, delCond)
-	}
-}
+//
+//// Return logical expression with soft deletion statement
+//func softDelCond(cond db.LogicalExpr, showDeleted bool) db.LogicalExpr {
+//	if showDeleted {
+//		return cond
+//	}
+//	delCond := db.Cond{"deleted_date IS": nil}
+//	if cond == nil {
+//		return delCond
+//	} else {
+//		return db.And(cond, delCond)
+//	}
+//}
 
 type dbQueryParams struct {
 	Page        uint

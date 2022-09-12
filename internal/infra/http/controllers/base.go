@@ -33,17 +33,18 @@ func internalServerError(w http.ResponseWriter, err error) {
 	}
 }
 
-func created(w http.ResponseWriter, body interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	if body != nil {
-		err := json.NewEncoder(w).Encode(map[string]interface{}{"created": body})
-
-		if err != nil {
-			log.Print(err)
-		}
-	}
-}
+//
+//func created(w http.ResponseWriter, body interface{}) {
+//	w.Header().Set("Content-Type", "application/json")
+//	w.WriteHeader(http.StatusCreated)
+//	if body != nil {
+//		err := json.NewEncoder(w).Encode(map[string]interface{}{"created": body})
+//
+//		if err != nil {
+//			log.Print(err)
+//		}
+//	}
+//}
 
 func badRequest(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json")
