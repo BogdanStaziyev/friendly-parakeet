@@ -72,6 +72,9 @@ func TestController(t *testing.T) {
 	}
 
 	driver, err := postgres.WithInstance(internalSqlDriver, &postgres.Config{})
+	if err != nil {
+		log.Printf("error controller driver %s", err)
+	}
 	migrator, err := migrate.NewWithDatabaseInstance(
 		"file://"+conf.MigrationLocation,
 		conf.DatabaseName,

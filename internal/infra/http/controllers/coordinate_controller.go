@@ -32,7 +32,9 @@ func (c *CoordinateController) AddCoordinate() http.HandlerFunc {
 		token := authHeader[len(BEARER_SCHEMA):]
 
 		user, err := (*c.refreshTokenService).VerifyAccessToken(token)
-
+		if err != nil {
+			log.Println(writer, err)
+		}
 		coordinates, err := c.validator.ValidateAndMap(request)
 		if err != nil {
 			log.Print(writer, err)
@@ -57,7 +59,9 @@ func (c *CoordinateController) UpdateCoordinate() http.HandlerFunc {
 		token := authHeader[len(BEARER_SCHEMA):]
 
 		user, err := (*c.refreshTokenService).VerifyAccessToken(token)
-
+		if err != nil {
+			log.Println(writer, err)
+		}
 		coordinates, err := c.validator.ValidateAndMap(request)
 		if err != nil {
 			log.Println(err)
