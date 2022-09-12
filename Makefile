@@ -14,7 +14,7 @@ lint:
 	go mod tidy -v && git --no-pager diff --quiet go.mod go.sum
 
 docker-up:
-	docker-compose -f .docker/docker-compose.yml -p hoofs up -d --build
+	docker-compose -f .docker/docker-compose.yml -p coordinate up -d --build
 
 docker-down:
 	docker-compose -f .docker/docker-compose.yml down

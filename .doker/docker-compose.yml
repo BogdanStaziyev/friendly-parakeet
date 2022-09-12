@@ -1,0 +1,42 @@
+version: '3.9'
+services:
+  app:
+    container_name: coordinate
+    environment:
+      - DB_NAME=${DB_NAME:-coordinate}
+      - DB_HOST=${DB_HOST:-postgresdb}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - JWT_SECRET=${JWT_SECRET:-1234567890}
+    build:
+      context: ../
+      dockerfile: .docker/Dockerfile
+    ports:
+      - 8081:8080
+    restart: unless-stopped
+    depends_on:
+      - postgresdb
+    networks:
+      - default
+
+  postgresdb:
+    image: postgres:latest
+    container_name: coordinate
+    environment:
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-password}
+      - POSTGRES_DB=${DB_NAME:-coordinate}
+      - DATABASE_HOST=${DB_HOST:-localhost}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - '54323:54322'
+    networks:
+      - default
+
+volumes:
+  pg_data:
+
+networks:
+  default:
+    driver: bridge

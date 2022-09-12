@@ -11,7 +11,7 @@ COPY . .
 
 COPY internal/infra/database/migrations ../migrations
 
-RUN go build -o ../startapp cmd/startUP_server/main.go
+RUN go build -o ../startUp cmd/server/main.go
 
 WORKDIR /app
 
