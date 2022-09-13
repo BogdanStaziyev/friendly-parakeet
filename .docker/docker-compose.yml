@@ -5,14 +5,14 @@ services:
     environment:
       - DB_NAME=${DB_NAME:-coordinate}
       - DB_HOST=${DB_HOST:-postgresdb}
-      - DB_USER=${DB_USER:-postgres}
-      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - DB_USER=${DB_USER:-db_user}
+      - DB_PASSWORD=${DB_PASSWORD:-db_password}
       - JWT_SECRET=${JWT_SECRET:-1234567890}
     build:
       context: ../
       dockerfile: .docker/Dockerfile
     ports:
-      - "8081:8080"
+      - "8080:8080"
     restart: unless-stopped
     depends_on:
       - postgresdb
@@ -23,14 +23,14 @@ services:
     image: postgres:latest
     container_name: coordinate
     environment:
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-password}
+      - POSTGRES_USER=${DB_USER:-db_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-db_password}
       - POSTGRES_DB=${DB_NAME:-coordinate}
       - DATABASE_HOST=${DB_HOST:-localhost}
     volumes:
       - pg_data:/var/lib/postgresql/data
     ports:
-      - '5432:54322'
+      - '5433:54322'
     networks:
       - default
 
