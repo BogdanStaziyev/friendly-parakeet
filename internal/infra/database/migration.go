@@ -48,15 +48,15 @@ func Migrate(conf *config.Configuration) error {
 
 	dbVersion, err := strconv.Atoi(conf.MigrateToVersion)
 	if err == nil {
-		log.Printf("Migrate: starting migration to version %v\n", dbVersion)
+		log.Printf("Migrate: starting migrations to version %v\n", dbVersion)
 		err = m.Migrate(uint(dbVersion))
 		if err != nil {
-			log.Printf("Migrate: failed migration to version %v\n", dbVersion)
+			log.Printf("Migrate: failed migrations to version %v\n", dbVersion)
 			log.Printf("Migration table will be forcing to version %v\n You should clean your data base from wrong tables and then start server mith 'MIGRATE=latest' enviroment variable!", dbVersion)
 			err = m.Force(dbVersion)
 		}
 	} else {
-		log.Println("Migrate: starting migration to the latest version")
+		log.Println("Migrate: starting migrations to the latest version")
 		err = m.Up()
 	}
 	if err != nil {

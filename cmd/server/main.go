@@ -47,7 +47,7 @@ func main() {
 
 	err := database.Migrate(conf)
 	if err != nil {
-		log.Fatalf("Unable to apply migration: %q\n", err)
+		log.Fatalf("Unable to apply migrations: %q\n", err)
 	}
 
 	ses, err := postgresql.Open(
